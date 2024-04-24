@@ -1,4 +1,4 @@
-package org.example.designmanagerproject;
+package org.design_manager_project;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

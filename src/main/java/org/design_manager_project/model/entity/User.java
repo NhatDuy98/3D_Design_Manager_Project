@@ -1,12 +1,11 @@
-package org.design_manager_project.model;
+package org.design_manager_project.model.entity;
 
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
+import org.design_manager_project.model.BaseModel;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.List;
 
 @Entity
@@ -16,12 +15,7 @@ import java.util.List;
 @Setter
 @Builder
 @Table(name = "users")
-public class User {
-
-    @Id
-    @Column(name = "id", unique = true, nullable = false)
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+public class User extends BaseModel {
 
     @Column(name = "first_name", nullable = false, length = 30)
     private String firstName;
@@ -41,16 +35,8 @@ public class User {
     @Column(name = "is_active", nullable = false)
     private boolean isActive = true;
 
-    @Column(name = "created_at", nullable = false, updatable = false)
-    @CreationTimestamp
-    private LocalDateTime createdAt;
-
-    @Column(name = "updated_at", nullable = false)
-    @UpdateTimestamp
-    private LocalDateTime updatedAt;
-
     @Column(name = "deleted_at")
-    private LocalDateTime deletedAt;
+    private Instant deletedAt;
 
     @OneToMany(mappedBy = "user")
     private List<Space> spaces;

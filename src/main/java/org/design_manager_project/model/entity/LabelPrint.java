@@ -1,11 +1,8 @@
-package org.design_manager_project.model;
+package org.design_manager_project.model.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
-
-import java.time.LocalDateTime;
+import org.design_manager_project.model.BaseModel;
 
 @Entity
 @AllArgsConstructor
@@ -14,12 +11,7 @@ import java.time.LocalDateTime;
 @Setter
 @Builder
 @Table(name = "label_prints")
-public class LabelPrint {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false, unique = true)
-    private int id;
+public class LabelPrint extends BaseModel {
 
     @ManyToOne
     @JoinColumn(name = "label_id", nullable = false)
@@ -38,11 +30,4 @@ public class LabelPrint {
     @Column(name = "z_coordinate", nullable = false)
     private int zCoordinate;
 
-    @Column(name = "created_at", nullable = false, updatable = false)
-    @CreationTimestamp
-    private LocalDateTime createdAt;
-
-    @Column(name = "updated_at", nullable = false)
-    @UpdateTimestamp
-    private LocalDateTime updatedAt;
 }

@@ -1,4 +1,9 @@
 package org.design_manager_project.service;
+import org.springframework.stereotype.Service;
 
-public class CardService {
+
+@Service
+public class CardService{
+
+
 }

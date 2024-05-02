@@ -22,12 +22,12 @@ public class LabelPrint extends BaseModel {
     private Print print;
 
     @Column(name = "x_coordinate", nullable = false)
-    private int xCoordinate;
+    private double xCoordinate;
 
     @Column(name = "y_coordinate", nullable = false)
-    private int yCoordinate;
+    private double yCoordinate;
 
     @Column(name = "z_coordinate", nullable = false)
-    private int zCoordinate;
+    private double zCoordinate;
 
 }

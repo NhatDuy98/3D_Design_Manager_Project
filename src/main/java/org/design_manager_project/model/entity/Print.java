@@ -1,9 +1,10 @@
-package org.design_manager_project.model;
+package org.design_manager_project.model.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @Entity
 @AllArgsConstructor
@@ -12,12 +13,12 @@ import java.util.List;
 @Setter
 @Builder
 @Table(name = "prints")
-public class Print {
+public class Print{
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id", nullable = false, unique = true)
-    private int id;
+    private UUID id;
 
     @ManyToOne
     @JoinColumn(name = "card_id", nullable = false)

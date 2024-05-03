@@ -1,13 +1,13 @@
-package org.design_manager_project.model;
+package org.design_manager_project.model.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.design_manager_project.model.BaseModel;
 import org.design_manager_project.model.enums.Status;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
+
+import java.time.Instant;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -17,12 +17,7 @@ import java.util.List;
 @Setter
 @Builder
 @Table(name = "cards")
-public class Card {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false, unique = true)
-    private int id;
+public class Card extends BaseModel {
 
     @ManyToOne
     @JoinColumn(name = "project_id", nullable = false)
@@ -48,16 +43,8 @@ public class Card {
     @Column(name = "end_date", nullable = false)
     private LocalDate endDate;
 
-    @Column(name = "created_at", nullable = false, updatable = false)
-    @CreationTimestamp
-    private LocalDateTime createdAt;
-
-    @Column(name = "updated_at", nullable = false)
-    @UpdateTimestamp
-    private LocalDateTime updatedAt;
-
     @Column(name = "deleted_at")
-    private LocalDateTime deletedAt;
+    private Instant deletedAt;
 
     @OneToMany(mappedBy = "card")
     private List<Print> prints;

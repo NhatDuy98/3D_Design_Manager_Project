@@ -1,0 +1,324 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd"
+        objectQuotingStrategy="QUOTE_ONLY_RESERVED_WORDS">
+    <changeSet id="1714632422998-1" author="develop">
+        <createTable tableName="cards">
+            <column name="id" type="UUID">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_cards"/>
+            </column>
+            <column name="created_at" type="DATETIME">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="DATETIME">
+                <constraints nullable="false"/>
+            </column>
+            <column name="project_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="member_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="card_name" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="TEXT"/>
+            <column name="status" type="VARCHAR(12)"/>
+            <column name="start_date" type="DATE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="end_date" type="DATE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="deleted_at" type="DATETIME"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="1714632422998-2" author="develop">
+        <createTable tableName="comments">
+            <column name="id" type="UUID">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_comments"/>
+            </column>
+            <column name="created_at" type="DATETIME">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="DATETIME">
+                <constraints nullable="false"/>
+            </column>
+            <column name="member_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="card_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="print_id" type="UUID"/>
+            <column name="content" type="TEXT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet id="1714632422998-3" author="develop">
+        <createTable tableName="label_prints">
+            <column name="id" type="UUID">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_label_prints"/>
+            </column>
+            <column name="created_at" type="DATETIME">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="DATETIME">
+                <constraints nullable="false"/>
+            </column>
+            <column name="label_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="print_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="x_coordinate" type="DOUBLE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="y_coordinate" type="DOUBLE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="z_coordinate" type="DOUBLE">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet id="1714632422998-4" author="develop">
+        <createTable tableName="labels">
+            <column name="id" type="UUID">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_labels"/>
+            </column>
+            <column name="created_at" type="DATETIME">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="DATETIME">
+                <constraints nullable="false"/>
+            </column>
+            <column name="project_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="label_name" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="color" type="VARCHAR(50)"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="1714632422998-5" author="develop">
+        <createTable tableName="members">
+            <column name="id" type="UUID">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_members"/>
+            </column>
+            <column name="created_at" type="DATETIME">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="DATETIME">
+                <constraints nullable="false"/>
+            </column>
+            <column name="user_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="space_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="project_id" type="UUID"/>
+            <column name="role" type="VARCHAR(8)"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="1714632422998-6" author="develop">
+        <createTable tableName="prints">
+            <column name="id" type="UUID">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_prints"/>
+            </column>
+            <column name="card_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="member_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="latest_id" type="INT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet id="1714632422998-7" author="develop">
+        <createTable tableName="projects">
+            <column name="id" type="UUID">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_projects"/>
+            </column>
+            <column name="created_at" type="DATETIME">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="DATETIME">
+                <constraints nullable="false"/>
+            </column>
+            <column name="space_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="project_name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="TEXT"/>
+            <column name="start_date" type="DATE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="end_date" type="DATE">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet id="1714632422998-8" author="develop">
+        <createTable tableName="spaces">
+            <column name="id" type="UUID">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_spaces"/>
+            </column>
+            <column name="created_at" type="DATETIME">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="DATETIME">
+                <constraints nullable="false"/>
+            </column>
+            <column name="user_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="space_name" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="TEXT"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="1714632422998-9" author="develop">
+        <createTable tableName="users">
+            <column name="id" type="UUID">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_users"/>
+            </column>
+            <column name="created_at" type="DATETIME">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="DATETIME">
+                <constraints nullable="false"/>
+            </column>
+            <column name="first_name" type="VARCHAR(30)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_name" type="VARCHAR(30)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="password" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="email" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="avatar" type="VARCHAR(255)"/>
+            <column name="is_active" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+            <column name="deleted_at" type="DATETIME"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="1714632422998-10" author="develop">
+        <createTable tableName="versions">
+            <column name="id" type="UUID">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_versions"/>
+            </column>
+            <column name="created_at" type="DATETIME">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="DATETIME">
+                <constraints nullable="false"/>
+            </column>
+            <column name="print_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="image" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet id="1714632422998-11" author="develop">
+        <addUniqueConstraint columnNames="space_id" constraintName="uc_members_space" tableName="members"/>
+    </changeSet>
+    <changeSet id="1714632422998-12" author="develop">
+        <addUniqueConstraint columnNames="user_id" constraintName="uc_members_user" tableName="members"/>
+    </changeSet>
+    <changeSet id="1714632422998-13" author="develop">
+        <addUniqueConstraint columnNames="email" constraintName="uc_users_email" tableName="users"/>
+    </changeSet>
+    <changeSet id="1714632422998-14" author="develop">
+        <addForeignKeyConstraint baseColumnNames="member_id" baseTableName="cards" constraintName="FK_CARDS_ON_MEMBER"
+                                 referencedColumnNames="id" referencedTableName="members"/>
+    </changeSet>
+    <changeSet id="1714632422998-15" author="develop">
+        <addForeignKeyConstraint baseColumnNames="project_id" baseTableName="cards" constraintName="FK_CARDS_ON_PROJECT"
+                                 referencedColumnNames="id" referencedTableName="projects"/>
+    </changeSet>
+    <changeSet id="1714632422998-16" author="develop">
+        <addForeignKeyConstraint baseColumnNames="card_id" baseTableName="comments" constraintName="FK_COMMENTS_ON_CARD"
+                                 referencedColumnNames="id" referencedTableName="cards"/>
+    </changeSet>
+    <changeSet id="1714632422998-17" author="develop">
+        <addForeignKeyConstraint baseColumnNames="member_id" baseTableName="comments"
+                                 constraintName="FK_COMMENTS_ON_MEMBER" referencedColumnNames="id"
+                                 referencedTableName="members"/>
+    </changeSet>
+    <changeSet id="1714632422998-18" author="develop">
+        <addForeignKeyConstraint baseColumnNames="print_id" baseTableName="comments"
+                                 constraintName="FK_COMMENTS_ON_PRINT" referencedColumnNames="id"
+                                 referencedTableName="prints"/>
+    </changeSet>
+    <changeSet id="1714632422998-19" author="develop">
+        <addForeignKeyConstraint baseColumnNames="project_id" baseTableName="labels"
+                                 constraintName="FK_LABELS_ON_PROJECT" referencedColumnNames="id"
+                                 referencedTableName="projects"/>
+    </changeSet>
+    <changeSet id="1714632422998-20" author="develop">
+        <addForeignKeyConstraint baseColumnNames="label_id" baseTableName="label_prints"
+                                 constraintName="FK_LABEL_PRINTS_ON_LABEL" referencedColumnNames="id"
+                                 referencedTableName="labels"/>
+    </changeSet>
+    <changeSet id="1714632422998-21" author="develop">
+        <addForeignKeyConstraint baseColumnNames="print_id" baseTableName="label_prints"
+                                 constraintName="FK_LABEL_PRINTS_ON_PRINT" referencedColumnNames="id"
+                                 referencedTableName="prints"/>
+    </changeSet>
+    <changeSet id="1714632422998-22" author="develop">
+        <addForeignKeyConstraint baseColumnNames="project_id" baseTableName="members"
+                                 constraintName="FK_MEMBERS_ON_PROJECT" referencedColumnNames="id"
+                                 referencedTableName="projects"/>
+    </changeSet>
+    <changeSet id="1714632422998-23" author="develop">
+        <addForeignKeyConstraint baseColumnNames="space_id" baseTableName="members" constraintName="FK_MEMBERS_ON_SPACE"
+                                 referencedColumnNames="id" referencedTableName="spaces"/>
+    </changeSet>
+    <changeSet id="1714632422998-24" author="develop">
+        <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="members" constraintName="FK_MEMBERS_ON_USER"
+                                 referencedColumnNames="id" referencedTableName="users"/>
+    </changeSet>
+    <changeSet id="1714632422998-25" author="develop">
+        <addForeignKeyConstraint baseColumnNames="card_id" baseTableName="prints" constraintName="FK_PRINTS_ON_CARD"
+                                 referencedColumnNames="id" referencedTableName="cards"/>
+    </changeSet>
+    <changeSet id="1714632422998-26" author="develop">
+        <addForeignKeyConstraint baseColumnNames="member_id" baseTableName="prints" constraintName="FK_PRINTS_ON_MEMBER"
+                                 referencedColumnNames="id" referencedTableName="members"/>
+    </changeSet>
+    <changeSet id="1714632422998-27" author="develop">
+        <addForeignKeyConstraint baseColumnNames="space_id" baseTableName="projects"
+                                 constraintName="FK_PROJECTS_ON_SPACE" referencedColumnNames="id"
+                                 referencedTableName="spaces"/>
+    </changeSet>
+    <changeSet id="1714632422998-28" author="develop">
+        <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="spaces" constraintName="FK_SPACES_ON_USER"
+                                 referencedColumnNames="id" referencedTableName="users"/>
+    </changeSet>
+    <changeSet id="1714632422998-29" author="develop">
+        <addForeignKeyConstraint baseColumnNames="print_id" baseTableName="versions"
+                                 constraintName="FK_VERSIONS_ON_PRINT" referencedColumnNames="id"
+                                 referencedTableName="prints"/>
+    </changeSet>
+
+</databaseChangeLog>

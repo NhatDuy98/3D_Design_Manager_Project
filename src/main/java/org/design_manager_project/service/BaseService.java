@@ -1,67 +1,75 @@
 package org.design_manager_project.service;
 
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.design_manager_project.dto.BaseDTO;
 import org.design_manager_project.mapper.BaseMapper;
+import org.design_manager_project.mapper.BaseMapperImpl;
+import org.design_manager_project.model.BaseModel;
 import org.design_manager_project.repository.BaseRepository;
+import org.design_manager_project.util.AppUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
-@MappedSuperclass
 @RequiredArgsConstructor
-public abstract class BaseService<E, DTO, ID extends String> {
+public abstract class BaseService<E extends BaseModel,
+        RQ extends BaseDTO<ID>,
+        RS extends BaseDTO<ID>,
+        ID extends UUID> {
 
     private final BaseRepository<E, ID> baseRepository;
-    private final BaseMapper<E, DTO> baseMapper;
-
-    public List<E> findAll(){
-        return baseRepository.findAll();
+    private final BaseMapperImpl<E, RQ, RS, ID> baseMapper;
+    public List<RS> findAll(){
+        return baseMapper.convertListToDTO(baseRepository.findAll());
     }
 
-    public List<DTO> findAllDTO(){
-        return baseMapper.convertListToDTO(findAll());
+    public Page<RS> findAllWithPage(Pageable pageable){
+        return baseMapper.convertPageToDTO(baseRepository.findAll(pageable));
     }
 
-    public Page<E> findAllWithPage(Pageable pageable){
-        return baseRepository.findAll(pageable);
+    public Optional<RS> findById(ID id){
+        return baseMapper.convertOptional(baseRepository.findById(id));
     }
 
-    public Page<DTO> findAllWithPageDTO(Pageable pageable){
-        return baseMapper.convertPageToDTO(findAllWithPage(pageable));
+    public RS create(RQ request){
+        E entity = baseMapper.convertToEntity(request);
+        baseRepository.save(entity);
+        return baseMapper.convertToDTO(entity);
     }
 
-    public E findById(ID id){
-        return baseRepository.findById(id).orElse(null);
-    }
+    public List<RS> createAll(List<RQ> list){
+        List<E> eList = baseMapper.convertListToEntity(list);
 
-    public DTO findByIdDTO(ID id){
-        return baseMapper.convertToDTO(findById(id));
-    }
-
-    public Optional<E> findAllById(ID id){
-        return baseRepository.findById(id);
+        return baseMapper.convertListToDTO(eList.stream().map(e -> baseRepository.save(e)).toList());
     }
 
     @Transactional
-    public DTO saveEntity(DTO dto){
-        baseRepository.save(baseMapper.convertToEntity(dto));
-        return dto;
+    public RS update(ID id, RQ request){
+
+        E entityRepo = baseRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Not found entity with id: " + id));
+
+        E entity = baseMapper.convertToEntity(request);
+
+        entity.setId(id);
+
+        baseMapper.updateEntity(entity, entityRepo);
+
+        baseRepository.save(entityRepo);
+
+        return baseMapper.convertToDTO(entityRepo);
     }
 
     @Transactional
-    public DTO updateEntity(ID id, DTO updated){
-        E e = findById(id);
-
-        E updatedE = baseMapper.convertToEntity(updated);
-
-        baseRepository.save(e);
-
-        return updated;
+    public List<RS> updateAll(List<RQ> rqList){
+        return rqList.stream().map(e -> update(e.getId(), e)).toList();
     }
+
 
     @Transactional
     public void deleteById(ID id){
@@ -70,9 +78,7 @@ public abstract class BaseService<E, DTO, ID extends String> {
 
     @Transactional
     public void deleteAll(List<ID> ids){
-        ids.forEach(id -> {
-            baseRepository.deleteById(id);
-        });
+        baseRepository.deleteAllById(ids);
     }
 
 }

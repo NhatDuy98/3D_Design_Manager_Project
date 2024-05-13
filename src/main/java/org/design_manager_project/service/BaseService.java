@@ -3,13 +3,10 @@ package org.design_manager_project.service;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.transaction.Transactional;
-import lombok.RequiredArgsConstructor;
 import org.design_manager_project.dto.BaseDTO;
-import org.design_manager_project.mapper.BaseMapper;
 import org.design_manager_project.mapper.BaseMapperImpl;
 import org.design_manager_project.model.BaseModel;
 import org.design_manager_project.repository.BaseRepository;
-import org.design_manager_project.util.AppUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -17,14 +14,17 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-@RequiredArgsConstructor
-public abstract class BaseService<E extends BaseModel,
-        RQ extends BaseDTO<ID>,
-        RS extends BaseDTO<ID>,
-        ID extends UUID> {
+@MappedSuperclass
+public abstract class BaseService<E extends BaseModel, RQ extends BaseDTO<ID>, RS extends BaseDTO<ID>, ID extends UUID> {
 
     private final BaseRepository<E, ID> baseRepository;
     private final BaseMapperImpl<E, RQ, RS, ID> baseMapper;
+
+    protected BaseService(BaseRepository<E, ID> baseRepository, BaseMapperImpl<E, RQ, RS, ID> baseMapper) {
+        this.baseRepository = baseRepository;
+        this.baseMapper = baseMapper;
+    }
+
     public List<RS> findAll(){
         return baseMapper.convertListToDTO(baseRepository.findAll());
     }
@@ -38,15 +38,17 @@ public abstract class BaseService<E extends BaseModel,
     }
 
     public RS create(RQ request){
-        E entity = baseMapper.convertToEntity(request);
-        baseRepository.save(entity);
-        return baseMapper.convertToDTO(entity);
+
+        E e = baseMapper.convertToEntity(request);
+
+        baseRepository.save(e);
+        return baseMapper.convertToDTO(e);
     }
 
     public List<RS> createAll(List<RQ> list){
-        List<E> eList = baseMapper.convertListToEntity(list);
+        List<E> es = baseMapper.convertListToEntity(list);
 
-        return baseMapper.convertListToDTO(eList.stream().map(e -> baseRepository.save(e)).toList());
+        return baseMapper.convertListToDTO(baseRepository.saveAll(es));
     }
 
     @Transactional
@@ -54,20 +56,30 @@ public abstract class BaseService<E extends BaseModel,
 
         E entityRepo = baseRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Not found entity with id: " + id));
 
-        E entity = baseMapper.convertToEntity(request);
+        E updated = baseMapper.convertToEntity(request);
 
-        entity.setId(id);
+        updated.setId(id);
 
-        baseMapper.updateEntity(entity, entityRepo);
+        E e = baseMapper.updateEntity(updated, entityRepo);
 
-        baseRepository.save(entityRepo);
+        baseRepository.save(e);
 
-        return baseMapper.convertToDTO(entityRepo);
+        return baseMapper.convertToDTO(e);
     }
 
     @Transactional
     public List<RS> updateAll(List<RQ> rqList){
-        return rqList.stream().map(e -> update(e.getId(), e)).toList();
+        List<E> eList = rqList.stream().map(e -> {
+            E entityRepo = baseRepository.findById(e.getId()).orElseThrow(() -> new EntityNotFoundException("Not found entity with id: " + e.getId()));
+
+            E updated = baseMapper.convertToEntity(e);
+
+            updated.setId(e.getId());
+
+            return baseMapper.updateEntity(updated, entityRepo);
+        }).toList();
+
+        return baseMapper.convertListToDTO(baseRepository.saveAll(eList));
     }
 
 

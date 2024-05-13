@@ -1,23 +1,21 @@
 package org.design_manager_project.mapper;
 
-import org.design_manager_project.dto.BaseDTO;
+import org.mapstruct.MappingTarget;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
 import java.util.Optional;
 
-public interface BaseMapper<E, RQ, RS> {
+public interface BaseMapper<E, DTO> {
 
-    RS convertToDTO(E entity);
+    DTO convertToDTO(E entity);
 
-    E convertToEntity(RQ request);
+    Page<DTO> convertPageToDTO(Page<E> pageE);
 
-    Page<RS> convertPageToDTO(Page<E> pageE);
+    List<DTO> convertListToDTO(List<E> listE);
 
-    List<RS> convertListToDTO(List<E> listE);
+    Optional<DTO> convertOptional(Optional<E> optionalE);
 
-    List<E> convertListToEntity(List<RQ> rqList);
-
-    Optional<RS> convertOptional(Optional<E> optionalE);
+    E updateEntity(E updated,@MappingTarget E entity);
 
 }

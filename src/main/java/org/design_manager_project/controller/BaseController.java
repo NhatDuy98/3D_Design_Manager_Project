@@ -1,6 +1,6 @@
 package org.design_manager_project.controller;
 
-import lombok.RequiredArgsConstructor;
+import jakarta.persistence.MappedSuperclass;
 import org.design_manager_project.dto.BaseDTO;
 import org.design_manager_project.model.BaseModel;
 import org.design_manager_project.service.BaseService;
@@ -14,13 +14,16 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-@RequiredArgsConstructor
+@MappedSuperclass
 public abstract class BaseController<E extends BaseModel,
-        RQ extends BaseDTO<ID>,
-        RS extends BaseDTO<ID>,
+        RQ extends BaseDTO<ID>, RS extends BaseDTO<ID>,
         ID extends UUID> {
 
     private final BaseService<E, RQ, RS, ID> baseService;
+
+    protected BaseController(BaseService<E, RQ, RS, ID> baseService) {
+        this.baseService = baseService;
+    }
 
     @GetMapping
     public ResponseEntity<Page<RS>> getPage(Pageable pageable){
@@ -71,7 +74,7 @@ public abstract class BaseController<E extends BaseModel,
 
     @DeleteMapping("/delete-all")
     public ResponseEntity<String> deleteAll(
-            @RequestBody List<BaseDTO<ID>> deleteList
+            @RequestBody List<RQ> deleteList
     ){
         baseService.deleteAll(deleteList.stream().map(e -> e.getId()).toList());
         return ResponseEntity.status(HttpStatus.NO_CONTENT)

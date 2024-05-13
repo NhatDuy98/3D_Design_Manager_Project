@@ -26,5 +26,4 @@ public class BaseModel {
     @Column(name = "updated_at", nullable = false)
     @UpdateTimestamp
     private Instant updatedAt;
-
 }

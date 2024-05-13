@@ -1,8 +1,8 @@
 package org.design_manager_project.controller;
 
-import jakarta.persistence.MappedSuperclass;
 import lombok.RequiredArgsConstructor;
-import org.design_manager_project.mapper.BaseMapper;
+import org.design_manager_project.dto.BaseDTO;
+import org.design_manager_project.model.BaseModel;
 import org.design_manager_project.service.BaseService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -10,41 +10,72 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@MappedSuperclass
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+
 @RequiredArgsConstructor
-public abstract class BaseController<E, DTO, ID extends String> {
+public abstract class BaseController<E extends BaseModel,
+        RQ extends BaseDTO<ID>,
+        RS extends BaseDTO<ID>,
+        ID extends UUID> {
 
-    private final BaseService<E, DTO, ID> baseService;
+    private final BaseService<E, RQ, RS, ID> baseService;
 
-    @GetMapping("")
-    public ResponseEntity<Page<DTO>> getPage(Pageable pageable){
-        return new ResponseEntity<>(baseService.findAllWithPageDTO(pageable), HttpStatus.OK);
+    @GetMapping
+    public ResponseEntity<Page<RS>> getPage(Pageable pageable){
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(baseService.findAllWithPage(pageable));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<DTO> findById(@PathVariable ID id){
-        return new ResponseEntity<>(baseService.findByIdDTO(id), HttpStatus.OK);
+    public ResponseEntity<Optional<RS>> findById(@PathVariable("id") ID id){
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(baseService.findById(id));
     }
 
-    @PostMapping("")
-    public ResponseEntity<DTO> create(@RequestBody DTO created){
-        DTO dto = baseService.saveEntity(created);
-        return new ResponseEntity<>(dto, HttpStatus.CREATED);
+    @PostMapping
+    public ResponseEntity<RS> create(@RequestBody RQ created){
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(baseService.create(created));
+    }
+    @PostMapping("/create-all")
+    public ResponseEntity<List<RS>> createAll(@RequestBody List<RQ> createdList){
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(baseService.createAll(createdList));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<DTO> updateAll(
-            @PathVariable ID id,
-            @RequestBody DTO updated
+    public ResponseEntity<RS> update(
+            @PathVariable("id") ID id,
+            @RequestBody RQ updated
     ){
-        DTO dto = baseService.updateEntity(id, updated);
-        return new ResponseEntity<>(dto, HttpStatus.OK);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(baseService.update(id, updated));
+    }
+
+    @PutMapping("/update-all")
+    public ResponseEntity<List<RS>> updateAll(
+            @RequestBody List<RQ> updatedList
+    ){
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(baseService.updateAll(updatedList));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> delete(@PathVariable ID id){
+    public ResponseEntity<String> delete(@PathVariable("id") ID id){
         baseService.deleteById(id);
-        return new ResponseEntity<>("deleted",HttpStatus.NO_CONTENT);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT)
+                .body("Deleted");
+    }
+
+    @DeleteMapping("/delete-all")
+    public ResponseEntity<String> deleteAll(
+            @RequestBody List<BaseDTO<ID>> deleteList
+    ){
+        baseService.deleteAll(deleteList.stream().map(e -> e.getId()).toList());
+        return ResponseEntity.status(HttpStatus.NO_CONTENT)
+                .body("Deleted");
     }
 
 }

@@ -4,81 +4,91 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.transaction.Transactional;
 import org.design_manager_project.dtos.BaseDTO;
+import org.design_manager_project.exeptions.BadRequestException;
 import org.design_manager_project.filter.BaseFilter;
-import org.design_manager_project.mappers.BaseMapperImpl;
+import org.design_manager_project.mappers.BaseMapper;
 import org.design_manager_project.models.BaseModel;
 import org.design_manager_project.repositories.BaseRepository;
+import org.design_manager_project.utils.Constants;
 import org.springframework.data.domain.Page;
 
+import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 @MappedSuperclass
 public abstract class BaseService<E extends BaseModel,
-        RQ extends BaseDTO<ID>, RS extends BaseDTO<ID>,
+        DTO extends BaseDTO<ID>,
         FT extends BaseFilter,
         ID extends UUID> {
 
     private final BaseRepository<E, FT, ID> baseRepository;
-    private final BaseMapperImpl<E, RQ, RS, ID> baseMapper;
+    private final BaseMapper<E, DTO> baseMapper;
 
-    protected BaseService(BaseRepository<E, FT, ID> baseRepository, BaseMapperImpl<E, RQ, RS, ID> baseMapper) {
+    protected BaseService(BaseRepository<E, FT, ID> baseRepository, BaseMapper<E, DTO> baseMapper) {
         this.baseRepository = baseRepository;
         this.baseMapper = baseMapper;
     }
-    public List<RS> findAll(){
+    public List<DTO> findAll(){
         return baseMapper.convertListToDTO(baseRepository.findAll());
     }
 
-    public Page<RS> findAllWithPage(FT ft){
+    public Page<DTO> findAllWithPage(FT ft){
         return baseMapper.convertPageToDTO(baseRepository.findAllWithFilter(ft.getPageable(), ft));
     }
 
-    public Optional<RS> findById(ID id){
-        return baseMapper.convertOptional(baseRepository.findById(id));
+    public Optional<DTO> findById(ID id) throws NoSuchFieldException, IllegalAccessException {
+        E e = baseRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Not found entity with id: " + id));
+
+        Field deletedAtField = e.getClass().getDeclaredField("deletedAt");
+        deletedAtField.setAccessible(true);
+        Object deletedAtValue = deletedAtField.get(e);
+        if (deletedAtValue != null) {
+            throw new BadRequestException(Constants.OBJECT_DELETED);
+        }
+
+        return baseMapper.convertOptional(Optional.of(e));
     }
 
-    public RS create(RQ request){
+    public DTO create(DTO dto){
 
-        E e = baseMapper.convertToEntityForCreate(request);
+        E e = baseMapper.convertToEntity(dto);
 
         baseRepository.save(e);
         return baseMapper.convertToDTO(e);
     }
 
-    public List<RS> createAll(List<RQ> list){
-        List<E> es = baseMapper.convertListToEntityForCreate(list);
+    public List<DTO> createAll(List<DTO> list){
+        List<E> es = baseMapper.convertListToEntity(list);
 
         return baseMapper.convertListToDTO(baseRepository.saveAll(es));
     }
 
     @Transactional
-    public RS update(ID id, RQ request){
+    public DTO update(ID id, DTO dto){
 
         E entityRepo = baseRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Not found entity with id: " + id));
 
-        E updated = baseMapper.convertToEntityForUpdate(request);
+        E updated = baseMapper.updateEntity(dto, entityRepo);
 
         updated.setId(id);
 
-        E e = baseMapper.updateEntity(updated, entityRepo);
+        baseRepository.save(updated);
 
-        baseRepository.save(e);
-
-        return baseMapper.convertToDTO(e);
+        return baseMapper.convertToDTO(updated);
     }
 
     @Transactional
-    public List<RS> updateAll(List<RQ> rqList){
+    public List<DTO> updateAll(List<DTO> rqList){
         List<E> eList = rqList.stream().map(e -> {
             E entityRepo = baseRepository.findById(e.getId()).orElseThrow(() -> new EntityNotFoundException("Not found entity with id: " + e.getId()));
 
-            E updated = baseMapper.convertToEntityForUpdate(e);
+            E updated = baseMapper.updateEntity(e, entityRepo);
 
             updated.setId(e.getId());
 
-            return baseMapper.updateEntity(updated, entityRepo);
+            return updated;
         }).toList();
 
         return baseMapper.convertListToDTO(baseRepository.saveAll(eList));

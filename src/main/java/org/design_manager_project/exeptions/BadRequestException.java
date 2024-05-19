@@ -5,9 +5,8 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class DeletedException extends RuntimeException{
-    public DeletedException(String message){
+public class BadRequestException extends RuntimeException{
+    public BadRequestException(String message){
         super(message);
     }
-
 }

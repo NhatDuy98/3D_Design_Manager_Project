@@ -1,8 +1,14 @@
 package org.design_manager_project.models.entity;
 
 
-import jakarta.persistence.*;
-import lombok.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.design_manager_project.models.BaseModel;
 
 import java.time.Instant;
@@ -13,7 +19,6 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 @Setter
-@Builder
 @Table(name = "users")
 public class User extends BaseModel {
 
@@ -33,7 +38,7 @@ public class User extends BaseModel {
     private String avatar;
 
     @Column(name = "is_active", nullable = false)
-    private boolean isActive = true;
+    private Boolean isActive;
 
     @Column(name = "deleted_at")
     private Instant deletedAt;

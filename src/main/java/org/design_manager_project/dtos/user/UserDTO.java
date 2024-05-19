@@ -1,5 +1,6 @@
-package org.design_manager_project.dtos.user.request;
+package org.design_manager_project.dtos.user;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -16,7 +17,7 @@ import java.util.UUID;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserRequest extends BaseDTO<UUID> {
+public class UserDTO extends BaseDTO<UUID> {
 
     @NotBlank(message = "first name not blank")
     @Size(min = 1, max = 30, message = "size first name error")
@@ -28,12 +29,12 @@ public class UserRequest extends BaseDTO<UUID> {
     @Pattern(regexp = "^[^\\d\\s]\\D*$",message = "format error for last name")
     private String lastName;
 
-    private String password = "123456";
+    @JsonIgnore
+    private String password;
 
     @Email(message = "Email invalid")
     private String email;
 
     private String avatar;
-    private boolean isActive;
-
+    private Boolean isActive;
 }

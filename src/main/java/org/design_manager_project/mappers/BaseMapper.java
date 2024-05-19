@@ -10,12 +10,16 @@ public interface BaseMapper<E, DTO> {
 
     DTO convertToDTO(E entity);
 
+    E convertToEntity(DTO dto);
+
     Page<DTO> convertPageToDTO(Page<E> pageE);
 
     List<DTO> convertListToDTO(List<E> listE);
 
+    List<E> convertListToEntity(List<DTO> dtoList);
+
     Optional<DTO> convertOptional(Optional<E> optionalE);
 
-    E updateEntity(E updated,@MappingTarget E entity);
+    E updateEntity(DTO dto,@MappingTarget E entity);
 
 }

@@ -10,7 +10,8 @@ import org.springframework.data.repository.NoRepositoryBean;
 import java.util.UUID;
 
 @NoRepositoryBean
-public interface BaseRepository<E, FT extends BaseFilter, ID extends UUID> extends JpaRepository<E, ID>, JpaSpecificationExecutor<E> {
+public interface
+BaseRepository<E, FT extends BaseFilter, ID extends UUID> extends JpaRepository<E, ID>, JpaSpecificationExecutor<E> {
 
     Page<E> findAllWithFilter(Pageable pageable, FT ft);
 }

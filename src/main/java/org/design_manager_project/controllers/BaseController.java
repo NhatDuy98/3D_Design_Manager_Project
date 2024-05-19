@@ -2,127 +2,86 @@ package org.design_manager_project.controllers;
 
 import jakarta.persistence.MappedSuperclass;
 import jakarta.validation.Valid;
+import org.design_manager_project.dtos.ApiResponse;
 import org.design_manager_project.dtos.BaseDTO;
-import org.design_manager_project.dtos.ResponseObject;
 import org.design_manager_project.filter.BaseFilter;
 import org.design_manager_project.models.BaseModel;
 import org.design_manager_project.services.BaseService;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 @MappedSuperclass
 @Validated
 public abstract class BaseController<E extends BaseModel,
-        RQ extends BaseDTO<ID>, RS extends BaseDTO<ID>,
+        DTO extends BaseDTO<ID>,
         FT extends BaseFilter,
         ID extends UUID> {
 
-    private final BaseService<E, RQ, RS, FT, ID> baseService;
+    private final BaseService<E, DTO, FT, ID> baseService;
 
-    protected BaseController(BaseService<E, RQ, RS, FT, ID> baseService) {
+    protected BaseController(BaseService<E, DTO, FT, ID> baseService) {
         this.baseService = baseService;
     }
 
     @GetMapping
-    public ResponseEntity<ResponseObject> getPage(FT ft){
+    public ResponseEntity<ApiResponse> getPage(FT ft){
         if (baseService.findAllWithPage(ft).isEmpty()){
+            List<ApiResponse> apiResponses = new ArrayList<>();
+
             return ResponseEntity.badRequest().body(
-                    ResponseObject.builder()
-                            .message("Get all failed")
-                            .status(HttpStatus.BAD_REQUEST)
-                            .data(null)
-                            .build()
+                    ApiResponse.success(apiResponses)
             );
         }
 
-        return ResponseEntity.ok(ResponseObject.builder()
-                        .data(baseService.findAllWithPage(ft))
-                        .message("Get all information successfully")
-                        .status(HttpStatus.OK)
-                    .build());
+        return ResponseEntity.ok(ApiResponse.success(baseService.findAllWithPage(ft)));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ResponseObject> findById(@PathVariable("id") ID id){
-        if (id == null){
-            return ResponseEntity.badRequest().body(
-                    ResponseObject.builder()
-                            .message("Not found id")
-                            .status(HttpStatus.BAD_REQUEST)
-                            .build()
-            );
-        }
-
-        return ResponseEntity.ok(ResponseObject.builder()
-                        .message("Get information of id: " + id + " successfully")
-                        .status(HttpStatus.OK)
-                        .data(baseService.findById(id))
-                    .build());
+    public ResponseEntity<ApiResponse> findById(@PathVariable("id") ID id) throws NoSuchFieldException, IllegalAccessException{
+        return ResponseEntity.ok(ApiResponse.success(baseService.findById(id)));
     }
 
     @PostMapping
-    public ResponseEntity<ResponseObject> create(@Valid @RequestBody RQ created){
-        return ResponseEntity.ok(ResponseObject.builder()
-                        .message("Create successfully")
-                        .status(HttpStatus.CREATED)
-                        .data(baseService.create(created))
-                    .build());
+    public ResponseEntity<ApiResponse> create(@RequestBody @Valid DTO dto){
+        return ResponseEntity.ok(ApiResponse.created(baseService.create(dto)));
     }
-    @PostMapping("/create-all")
-    public ResponseEntity<ResponseObject> createAll(@RequestBody @Valid List<RQ> createdList){
-        return ResponseEntity.ok(ResponseObject.builder()
-                        .message("Create all successfully")
-                        .status(HttpStatus.CREATED)
-                        .data(baseService.createAll(createdList))
-                    .build());
+    @PostMapping("/create-bulk")
+    public ResponseEntity<ApiResponse> createAll(@RequestBody @Valid List<DTO> dtos){
+        return ResponseEntity.ok(ApiResponse.created(baseService.createAll(dtos)));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ResponseObject> update(
+    public ResponseEntity<ApiResponse> update(
             @PathVariable("id") ID id,
-            @Valid @RequestBody RQ updated
+            @RequestBody @Valid DTO dto
     ){
-        return ResponseEntity.ok(ResponseObject.builder()
-                        .message("Update successfully")
-                        .status(HttpStatus.OK)
-                        .data(baseService.update(id, updated))
-                    .build());
+        return ResponseEntity.ok(ApiResponse.success(baseService.update(id, dto)));
     }
 
-    @PutMapping("/update-all")
-    public ResponseEntity<ResponseObject> updateAll(
-            @RequestBody @Valid List<RQ> updatedList
+    @PutMapping("/update-bulk")
+    public ResponseEntity<ApiResponse> updateAll(
+            @RequestBody @Valid List<DTO> dtos
     ){
-        return ResponseEntity.ok(ResponseObject.builder()
-                        .message("Update all successfully")
-                        .status(HttpStatus.OK)
-                        .data(baseService.updateAll(updatedList))
-                    .build());
+        return ResponseEntity.ok(ApiResponse.success(baseService.updateAll(dtos)));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<ResponseObject> delete(@PathVariable("id") ID id){
+    public ResponseEntity<ApiResponse> delete(@PathVariable("id") ID id){
         baseService.deleteById(id);
-        return ResponseEntity.ok(ResponseObject.builder()
-                        .message("Delete successfully")
-                        .status(HttpStatus.NO_CONTENT)
-                    .build());
+        return ResponseEntity.ok(ApiResponse.noContent());
     }
 
-    @DeleteMapping("/delete-all")
-    public ResponseEntity<ResponseObject> deleteAll(
-            @RequestBody List<RQ> deleteList
+    @DeleteMapping("/delete-bulk")
+    public ResponseEntity<ApiResponse> deleteAll(
+            @RequestBody List<DTO> dtos
     ){
-        baseService.deleteAll(deleteList.stream().map(e -> e.getId()).toList());
-        return ResponseEntity.ok(ResponseObject.builder()
-                .message("Delete all successfully")
-                .status(HttpStatus.NO_CONTENT)
-                .build());
+        baseService.deleteAll(dtos.stream().map(e -> e.getId()).toList());
+        return ResponseEntity.ok(ApiResponse.noContent());
     }
 
 }

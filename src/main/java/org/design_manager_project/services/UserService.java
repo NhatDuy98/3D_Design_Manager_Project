@@ -1,15 +1,13 @@
 package org.design_manager_project.services;
 
 import jakarta.persistence.EntityNotFoundException;
-import org.design_manager_project.dtos.user.request.UserRequest;
-import org.design_manager_project.dtos.user.response.UserResponse;
-import org.design_manager_project.exeptions.DeletedException;
-import org.design_manager_project.exeptions.EmailExistsException;
-import org.design_manager_project.exeptions.UserNotActiveException;
+import org.design_manager_project.dtos.user.UserDTO;
+import org.design_manager_project.exeptions.BadRequestException;
 import org.design_manager_project.filter.UserFilter;
 import org.design_manager_project.mappers.UserMapper;
 import org.design_manager_project.models.entity.User;
 import org.design_manager_project.repositories.UserRepository;
+import org.design_manager_project.utils.Constants;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -17,8 +15,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
-public class UserService extends BaseService<User, UserRequest, UserResponse, UserFilter, UUID>{
-
+public class UserService extends BaseService<User, UserDTO, UserFilter, UUID>{
     private final UserRepository userRepository;
     private final UserMapper userMapper;
 
@@ -28,57 +25,57 @@ public class UserService extends BaseService<User, UserRequest, UserResponse, Us
         this.userMapper = userMapper;
     }
 
-    private void checkEmailCreate(UserRequest userRequest){
+    private void validateEmailCreate(UserDTO userRequest){
         User e = userRepository.findUserByEmail(userRequest.getEmail());
 
         if (e != null){
-            throw new EmailExistsException("Email already exists");
+            throw new BadRequestException(Constants.EMAIL_ALREADY_EXISTS);
         }
     }
 
-    private void checkEmailUpdate(UUID id, UserRequest userRequest){
+    private void validateEmailUpdate(UUID id, UserDTO userRequest){
 
-        User eRepo = userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Not found entity with id: " + id));
+        User eRepo = userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(Constants.DATA_NOT_FOUND));
 
-        if (!eRepo.isActive()){
-            throw new UserNotActiveException("User not active");
+        if (Boolean.FALSE.equals(eRepo.getIsActive())){
+            throw new BadRequestException(Constants.NOT_ACTIVE);
         }
 
         if (eRepo.getDeletedAt() != null){
-            throw new DeletedException("User deleted");
+            throw new BadRequestException(Constants.OBJECT_DELETED);
         }
 
         User e = userRepository.findUserByEmail(userRequest.getEmail());
 
         if (e != null && !eRepo.getEmail().equals(userRequest.getEmail())){
-            throw new EmailExistsException("Email already exists");
+            throw new BadRequestException(Constants.EMAIL_ALREADY_EXISTS);
         }
 
     }
 
     private void checkDeleted(User user){
         if (user.getDeletedAt() != null){
-            throw new DeletedException("User with id: " + user.getId() + " already deleted");
+            throw new BadRequestException(Constants.OBJECT_DELETED);
         }
     }
 
     @Override
-    public UserResponse create(UserRequest request) {
-        checkEmailCreate(request);
+    public UserDTO create(UserDTO request) {
+        validateEmailCreate(request);
 
         return super.create(request);
     }
 
     @Override
-    public UserResponse update(UUID uuid, UserRequest request) {
-        checkEmailUpdate(uuid, request);
+    public UserDTO update(UUID uuid, UserDTO request) {
+        validateEmailUpdate(uuid, request);
 
         return super.update(uuid, request);
     }
 
     @Override
-    public List<UserResponse> updateAll(List<UserRequest> userRequests) {
-        userRequests.forEach(e -> checkEmailUpdate(e.getId(), e));
+    public List<UserDTO> updateAll(List<UserDTO> userRequests) {
+        userRequests.forEach(e -> validateEmailUpdate(e.getId(), e));
         return super.updateAll(userRequests);
     }
 

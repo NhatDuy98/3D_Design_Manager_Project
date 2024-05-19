@@ -10,7 +10,6 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserFilter extends BaseFilter{
-    private boolean deletedAt;
     private boolean isActive;
 
 }

@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.Instant;
 import java.util.UUID;
 
 @MappedSuperclass
@@ -15,4 +16,6 @@ import java.util.UUID;
 @NoArgsConstructor
 public class BaseDTO<ID extends UUID> {
     private ID id;
+    private Instant createdAt;
+    private Instant updatedAt;
 }

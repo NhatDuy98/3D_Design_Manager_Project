@@ -7,6 +7,7 @@ import org.design_manager_project.dtos.BaseDTO;
 import org.design_manager_project.filter.BaseFilter;
 import org.design_manager_project.models.BaseModel;
 import org.design_manager_project.services.BaseService;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -30,7 +31,9 @@ public abstract class BaseController<E extends BaseModel,
 
     @GetMapping
     public ResponseEntity<ApiResponse> getPage(FT ft){
-        if (baseService.findAllWithPage(ft).isEmpty()){
+        Page<DTO> dtos = baseService.findAllWithPage(ft);
+
+        if (dtos.isEmpty()){
             List<ApiResponse> apiResponses = new ArrayList<>();
 
             return ResponseEntity.badRequest().body(
@@ -38,11 +41,11 @@ public abstract class BaseController<E extends BaseModel,
             );
         }
 
-        return ResponseEntity.ok(ApiResponse.success(baseService.findAllWithPage(ft)));
+        return ResponseEntity.ok(ApiResponse.success(dtos));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse> findById(@PathVariable("id") ID id) throws NoSuchFieldException, IllegalAccessException{
+    public ResponseEntity<ApiResponse> findById(@PathVariable("id") ID id) {
         return ResponseEntity.ok(ApiResponse.success(baseService.findById(id)));
     }
 

@@ -38,14 +38,18 @@ public abstract class BaseService<E extends BaseModel,
         return baseMapper.convertPageToDTO(baseRepository.findAllWithFilter(ft.getPageable(), ft));
     }
 
-    public Optional<DTO> findById(ID id) throws NoSuchFieldException, IllegalAccessException {
+    public Optional<DTO> findById(ID id) {
         E e = baseRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Not found entity with id: " + id));
 
-        Field deletedAtField = e.getClass().getDeclaredField("deletedAt");
-        deletedAtField.setAccessible(true);
-        Object deletedAtValue = deletedAtField.get(e);
-        if (deletedAtValue != null) {
-            throw new BadRequestException(Constants.OBJECT_DELETED);
+        try {
+            Field deletedAtField = e.getClass().getDeclaredField("deletedAt");
+            deletedAtField.setAccessible(true);
+            Object deletedAtValue = deletedAtField.get(e);
+            if (deletedAtValue != null) {
+                throw new BadRequestException(Constants.OBJECT_DELETED);
+            }
+        } catch (NoSuchFieldException| IllegalAccessException ex){
+
         }
 
         return baseMapper.convertOptional(Optional.of(e));

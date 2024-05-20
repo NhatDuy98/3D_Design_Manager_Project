@@ -28,6 +28,6 @@ public class Space extends BaseModel {
     @OneToMany(mappedBy = "space", cascade = CascadeType.REMOVE)
     private List<Project> projects;
 
-    @OneToMany(mappedBy = "space", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "space", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     private List<Member> members;
 }

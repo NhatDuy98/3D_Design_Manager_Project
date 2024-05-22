@@ -11,13 +11,6 @@ import java.util.UUID;
 
 @Repository
 public interface UserRepository extends BaseRepository<User, UserFilter, UUID> {
-
-    @Query("SELECT u FROM User u WHERE (LOWER(u.firstName) LIKE LOWER(:search) OR " +
-            "LOWER(u.lastName) LIKE LOWER(:search) OR " +
-            "LOWER(u.email) LIKE LOWER(:search)) " +
-            "AND u.isActive = :isActive ")
-    Page<User> findAllWithSearchAndFilter(Pageable pageable, String search, boolean isActive);
-
     @Override
     @Query("""
             SELECT u FROM User u

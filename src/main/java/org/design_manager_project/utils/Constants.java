@@ -10,5 +10,8 @@ public class Constants {
     public static final String EMAIL_ALREADY_EXISTS = "EMAIL_ALREADY_EXISTS";
     public static final String NOT_ACTIVE = "NOT_ACTIVE";
     public static final String OBJECT_DELETED = "OBJECT_DELETED";
+    public static final Long EXPIRATION_TIME = 900000L;
+    public static final String TOKEN_PREFIX = "Bearer  ";
+    public static final String HEADER_STRING = "Authorization";
 
 }

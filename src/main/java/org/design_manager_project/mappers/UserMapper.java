@@ -1,6 +1,7 @@
 package org.design_manager_project.mappers;
 
 import org.design_manager_project.dtos.user.UserDTO;
+import org.design_manager_project.dtos.user.request.UserRequestForRegister;
 import org.design_manager_project.models.entity.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -24,6 +25,9 @@ public interface UserMapper extends BaseMapper<User, UserDTO>{
     @Override
     @Mapping(source = "password", target = "password", ignore = true)
     UserDTO convertToDTO(User entity);
+
+    @Mapping(target = "isActive", constant = "true")
+    User convertForRegister(UserRequestForRegister userRequestForRegister);
 
     @Override
     default Page<UserDTO> convertPageToDTO(Page<User> pageE){

@@ -28,6 +28,13 @@ public interface SpaceRepository extends BaseRepository<Space, SpaceFilter, UUID
             WHERE u.id = :userId
 
 """)
-    Optional<Space> findWithUserId(UUID userId);
+    Page<Space> findAllWithUserId(Pageable pageable, UUID userId);
+
+    @Query("""
+            SELECT s FROM Space s 
+            WHERE s.id = :spaceId AND s.user.id = :userId
+
+""")
+    Optional<Space> findSpaceWithUserId(UUID spaceId, UUID userId);
 
 }

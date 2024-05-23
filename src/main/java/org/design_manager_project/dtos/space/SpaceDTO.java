@@ -18,12 +18,12 @@ import java.util.UUID;
 @NoArgsConstructor
 public class SpaceDTO extends BaseDTO<UUID> {
 
-    @NotBlank(message = "name not blank")
-    @Size(min = 1, max = 30, message = "size name error")
-    @Pattern(regexp = "^[^\\d\\s]\\D*$",message = "format error for name")
+    @NotBlank(message = "Name can not blank")
+    @Size(min = 1, max = 30, message = "Size name error")
+    @Pattern(regexp = "^[^\\d\\s]\\D*$",message = "Format error for name")
     private String spaceName;
-    @Pattern(regexp = "^[^\\d\\s]\\D*$",message = "format error for name")
-    @Size(max = 65535, message = "size error")
+    @Pattern(regexp = "^[^\\d\\s]\\D*$",message = "Format error for name")
+    @Size(max = 65535, message = "Size error")
     private String description;
     private UserRequestWithID user;
 }

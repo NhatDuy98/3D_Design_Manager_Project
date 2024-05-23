@@ -61,6 +61,15 @@ public class ApiResponse {
                 .build();
     }
 
+    public static ApiResponse notFound(){
+        return ApiResponse.builder()
+                .message(Constants.DATA_NOT_FOUND)
+                .code(HttpStatus.NOT_FOUND.value())
+                .status(HttpStatus.NOT_FOUND)
+                .success(false)
+                .build();
+    }
+
     public static ApiResponse created(Object o){
         return ApiResponse.builder()
                 .message(Constants.CREATED)

@@ -38,14 +38,26 @@ public abstract class BaseService<E extends BaseModel,
         return baseMapper.convertPageToDTO(baseRepository.findAllWithFilter(ft.getPageable(), ft));
     }
 
-    public Optional<DTO> findById(ID id) throws NoSuchFieldException, IllegalAccessException {
+    public void checkIfDeleted(E e){
+        try {
+            Field deletedAtField = e.getClass().getDeclaredField("deletedAt");
+            deletedAtField.setAccessible(true);
+            Object deletedAtValue = deletedAtField.get(e);
+            if (deletedAtValue != null) {
+                throw new BadRequestException(Constants.OBJECT_DELETED);
+            }
+        } catch (NoSuchFieldException| IllegalAccessException ex){
+
+        }
+    }
+
+    public Optional<DTO> findById(ID id) {
         E e = baseRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Not found entity with id: " + id));
 
-        Field deletedAtField = e.getClass().getDeclaredField("deletedAt");
-        deletedAtField.setAccessible(true);
-        Object deletedAtValue = deletedAtField.get(e);
-        if (deletedAtValue != null) {
-            throw new BadRequestException(Constants.OBJECT_DELETED);
+        try {
+            checkIfDeleted(e);
+        } catch (BadRequestException ex){
+            throw new BadRequestException(ex.getMessage());
         }
 
         return baseMapper.convertOptional(Optional.of(e));
@@ -70,6 +82,12 @@ public abstract class BaseService<E extends BaseModel,
 
         E entityRepo = baseRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Not found entity with id: " + id));
 
+        try {
+            checkIfDeleted(entityRepo);
+        } catch (BadRequestException ex){
+            throw new BadRequestException(ex.getMessage());
+        }
+
         E updated = baseMapper.updateEntity(dto, entityRepo);
 
         updated.setId(id);
@@ -83,7 +101,11 @@ public abstract class BaseService<E extends BaseModel,
     public List<DTO> updateAll(List<DTO> rqList){
         List<E> eList = rqList.stream().map(e -> {
             E entityRepo = baseRepository.findById(e.getId()).orElseThrow(() -> new EntityNotFoundException("Not found entity with id: " + e.getId()));
-
+            try {
+                checkIfDeleted(entityRepo);
+            } catch (BadRequestException ex){
+                throw new BadRequestException(ex.getMessage());
+            }
             E updated = baseMapper.updateEntity(e, entityRepo);
 
             updated.setId(e.getId());

@@ -20,7 +20,7 @@ public class Member extends BaseModel {
     @JoinColumn(name = "user_id", nullable = false, unique = true)
     private User user;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "space_id", nullable = false, unique = true)
     private Space space;
 

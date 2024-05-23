@@ -25,9 +25,9 @@ public class Space extends BaseModel {
     @Column(name = "description", columnDefinition = "TEXT")
     private String description;
 
-    @OneToMany(mappedBy = "space")
+    @OneToMany(mappedBy = "space", cascade = CascadeType.REMOVE)
     private List<Project> projects;
 
-    @OneToMany(mappedBy = "space")
+    @OneToMany(mappedBy = "space", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     private List<Member> members;
 }

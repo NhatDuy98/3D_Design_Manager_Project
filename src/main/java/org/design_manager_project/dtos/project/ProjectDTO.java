@@ -23,10 +23,11 @@ import java.util.UUID;
 public class ProjectDTO extends BaseDTO<UUID> {
 
     @NotBlank(message = "Name not blank")
+    @Pattern(regexp = "^\\S+(\\s+[^\\s]+)*$",message = "Format error")
     @Size(min = 1, max = 30, message = "Size name error")
     private String projectName;
 
-    @Pattern(regexp = "^[^\\d\\s]\\D*$",message = "Format error")
+    @Pattern(regexp = "^\\S+(\\s+[^\\s]+)*$",message = "Format error")
     @Size(max = 65535, message = "Size error")
     private String description;
 

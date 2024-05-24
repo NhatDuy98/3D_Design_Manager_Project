@@ -20,9 +20,9 @@ public class SpaceDTO extends BaseDTO<UUID> {
 
     @NotBlank(message = "Name can not blank")
     @Size(min = 1, max = 30, message = "Size name error")
-    @Pattern(regexp = "^[^\\d\\s]\\D*$",message = "Format error for name")
+    @Pattern(regexp = "^\\S+(\\s+[^\\s]+)*$",message = "Format error for name")
     private String spaceName;
-    @Pattern(regexp = "^[^\\d\\s]\\D*$",message = "Format error for name")
+    @Pattern(regexp = "^\\S+(\\s+[^\\s]+)*$",message = "Format error for name")
     @Size(max = 65535, message = "Size error")
     private String description;
     private UserRequestWithID user;

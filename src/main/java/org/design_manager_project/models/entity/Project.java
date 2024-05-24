@@ -1,7 +1,10 @@
 package org.design_manager_project.models.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.design_manager_project.models.BaseModel;
 
 import java.time.LocalDate;
@@ -12,7 +15,6 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 @Setter
-@Builder
 @Table(name = "projects")
 public class Project extends BaseModel {
 
@@ -35,9 +37,16 @@ public class Project extends BaseModel {
     @OneToMany(mappedBy = "project")
     private List<Card> cards;
 
-    @OneToMany(mappedBy = "project")
+    @OneToMany(mappedBy = "project", cascade = {CascadeType.PERSIST})
     private List<Member> members;
 
-    @OneToMany(mappedBy = "project")
+    @OneToMany(mappedBy = "project", cascade = {CascadeType.REMOVE})
     private List<Label> labels;
+
+    @PreRemove
+    private void preRemove() {
+        for (Member member : members) {
+            member.setProject(null);
+        }
+    }
 }

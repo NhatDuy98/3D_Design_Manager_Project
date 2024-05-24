@@ -6,6 +6,7 @@ import jakarta.validation.ConstraintViolationException;
 import org.design_manager_project.dtos.ApiResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
+import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -37,24 +39,14 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<ApiResponse> handleEntityNotFoundException(EntityNotFoundException e){
         return ResponseEntity.badRequest().body(
-                ApiResponse.builder()
-                        .message(e.getMessage())
-                        .code(HttpStatus.BAD_REQUEST.value())
-                        .status(HttpStatus.BAD_REQUEST)
-                        .success(false)
-                        .build()
+                ApiResponse.badRequest(e.getMessage())
         );
     }
     @ExceptionHandler(BadRequestException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<ApiResponse> handleUserNotActive(BadRequestException e){
         return ResponseEntity.badRequest().body(
-                ApiResponse.builder()
-                        .message(e.getMessage())
-                        .code(HttpStatus.BAD_REQUEST.value())
-                        .status(HttpStatus.BAD_REQUEST)
-                        .success(false)
-                        .build()
+                ApiResponse.badRequest(e.getMessage())
         );
     }
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -71,12 +63,7 @@ public class GlobalExceptionHandler {
         String combine = String.join(" - ", errorMessages);
 
         return ResponseEntity.badRequest().body(
-                ApiResponse.builder()
-                        .message(combine)
-                        .code(HttpStatus.BAD_REQUEST.value())
-                        .status(HttpStatus.BAD_REQUEST)
-                        .success(false)
-                        .build()
+                ApiResponse.badRequest(combine)
         );
     }
 
@@ -91,12 +78,7 @@ public class GlobalExceptionHandler {
         String combinedErrorMessage = String.join(" - ", uniqueMessages) + ".";
 
         return ResponseEntity.badRequest().body(
-                ApiResponse.builder()
-                        .message(combinedErrorMessage)
-                        .code(HttpStatus.BAD_REQUEST.value())
-                        .status(HttpStatus.BAD_REQUEST)
-                        .success(false)
-                        .build()
+                ApiResponse.badRequest(combinedErrorMessage)
         );
     }
 
@@ -104,26 +86,18 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<ApiResponse> handleMethodArgumentTypeMismatch(MethodArgumentTypeMismatchException ex) {
         String message = "Invalid UUID format: " + ex.getValue();
-        ApiResponse responseObject = ApiResponse.builder()
-                .message(message)
-                .code(HttpStatus.BAD_REQUEST.value())
-                .status(HttpStatus.BAD_REQUEST)
-                .success(false)
-                .build();
-        return new ResponseEntity<>(responseObject, HttpStatus.BAD_REQUEST);
+        return ResponseEntity.badRequest().body(
+                ApiResponse.badRequest(message)
+        );
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<ApiResponse> handleIllegalArgumentException(IllegalArgumentException ex) {
         String message = "Invalid input: " + ex.getMessage();
-        ApiResponse responseObject = ApiResponse.builder()
-                .message(message)
-                .code(HttpStatus.BAD_REQUEST.value())
-                .status(HttpStatus.BAD_REQUEST)
-                .success(false)
-                .build();
-        return new ResponseEntity<>(responseObject, HttpStatus.BAD_REQUEST);
+        return ResponseEntity.badRequest().body(
+                ApiResponse.badRequest(message)
+        );
     }
 
     @ExceptionHandler(NoSuchFieldException.class)
@@ -134,7 +108,7 @@ public class GlobalExceptionHandler {
         );
     }
     @ExceptionHandler(IllegalAccessException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
     public ResponseEntity<ApiResponse> handleIllegalAccessException(IllegalAccessException ex){
         return ResponseEntity.badRequest().body(
                 ApiResponse.builder()
@@ -143,6 +117,28 @@ public class GlobalExceptionHandler {
                         .status(HttpStatus.FORBIDDEN)
                         .success(false)
                         .build());
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<ApiResponse> handleHttpMessageNotReadableException(HttpMessageNotReadableException ex) {
+        Throwable cause = ex.getMostSpecificCause();
+        String message;
+        if (cause instanceof DateTimeParseException) {
+            message = cause.getMessage();
+        } else {
+            message = "Malformed JSON request";
+        }
+        return ResponseEntity.badRequest().body(
+                ApiResponse.badRequest(message));
+    }
+
+
+    @ExceptionHandler(DateTimeParseException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<ApiResponse> handleDateTimeParseException(DateTimeParseException ex){
+        return ResponseEntity.badRequest().body(
+                ApiResponse.badRequest(ex.getMessage()));
     }
 
 }

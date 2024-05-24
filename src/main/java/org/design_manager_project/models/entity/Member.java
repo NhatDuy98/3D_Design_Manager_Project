@@ -5,6 +5,7 @@ import lombok.*;
 import org.design_manager_project.models.BaseModel;
 import org.design_manager_project.models.enums.Role;
 
+import java.time.Instant;
 import java.util.List;
 
 @Entity
@@ -32,6 +33,8 @@ public class Member extends BaseModel {
     @Column(name = "role", length = 8)
     private Role role;
 
+    @Column(name = "deleted_at")
+    private Instant deletedAt;
 
     @OneToMany(mappedBy = "member")
     private List<Card> cards;

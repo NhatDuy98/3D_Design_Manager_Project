@@ -4,7 +4,7 @@ import jakarta.persistence.MappedSuperclass;
 import jakarta.validation.Valid;
 import org.design_manager_project.dtos.ApiResponse;
 import org.design_manager_project.dtos.BaseDTO;
-import org.design_manager_project.filter.BaseFilter;
+import org.design_manager_project.filters.BaseFilter;
 import org.design_manager_project.models.BaseModel;
 import org.design_manager_project.services.BaseService;
 import org.springframework.data.domain.Page;

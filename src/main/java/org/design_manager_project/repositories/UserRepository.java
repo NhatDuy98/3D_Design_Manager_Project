@@ -1,6 +1,6 @@
 package org.design_manager_project.repositories;
 
-import org.design_manager_project.filter.UserFilter;
+import org.design_manager_project.filters.UserFilter;
 import org.design_manager_project.models.entity.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

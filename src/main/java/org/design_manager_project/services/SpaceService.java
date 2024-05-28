@@ -1,7 +1,7 @@
 package org.design_manager_project.services;
 
 import org.design_manager_project.dtos.space.SpaceDTO;
-import org.design_manager_project.filter.SpaceFilter;
+import org.design_manager_project.filters.SpaceFilter;
 import org.design_manager_project.mappers.SpaceMapper;
 import org.design_manager_project.models.entity.Member;
 import org.design_manager_project.models.entity.Space;

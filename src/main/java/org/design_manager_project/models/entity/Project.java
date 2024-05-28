@@ -1,7 +1,10 @@
 package org.design_manager_project.models.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.design_manager_project.models.BaseModel;
 
 import java.time.LocalDate;
@@ -12,7 +15,6 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 @Setter
-@Builder
 @Table(name = "projects")
 public class Project extends BaseModel {
 

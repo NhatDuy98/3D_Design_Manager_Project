@@ -1,6 +1,6 @@
 package org.design_manager_project.repositories;
 
-import org.design_manager_project.filter.SpaceFilter;
+import org.design_manager_project.filters.SpaceFilter;
 import org.design_manager_project.models.entity.Space;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

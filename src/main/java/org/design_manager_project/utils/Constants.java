@@ -10,5 +10,5 @@ public class Constants {
     public static final String EMAIL_ALREADY_EXISTS = "EMAIL_ALREADY_EXISTS";
     public static final String NOT_ACTIVE = "NOT_ACTIVE";
     public static final String OBJECT_DELETED = "OBJECT_DELETED";
-
+    public static final String OBJECT_ALREADY_EXISTS = "OBJECT_ALREADY_EXISTS";
 }

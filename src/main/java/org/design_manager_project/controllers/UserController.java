@@ -1,7 +1,7 @@
 package org.design_manager_project.controllers;
 
 import org.design_manager_project.dtos.user.UserDTO;
-import org.design_manager_project.filter.UserFilter;
+import org.design_manager_project.filters.UserFilter;
 import org.design_manager_project.models.entity.User;
 import org.design_manager_project.services.UserService;
 import org.springframework.web.bind.annotation.RequestMapping;

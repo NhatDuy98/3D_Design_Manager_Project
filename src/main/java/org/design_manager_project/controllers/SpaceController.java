@@ -2,7 +2,7 @@ package org.design_manager_project.controllers;
 
 import org.design_manager_project.dtos.ApiResponse;
 import org.design_manager_project.dtos.space.SpaceDTO;
-import org.design_manager_project.filter.SpaceFilter;
+import org.design_manager_project.filters.SpaceFilter;
 import org.design_manager_project.models.entity.Space;
 import org.design_manager_project.services.SpaceService;
 import org.springframework.data.domain.Page;

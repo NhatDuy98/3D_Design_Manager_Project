@@ -30,4 +30,14 @@ public interface MemberRepository extends BaseRepository<Member, MemberFilter, U
 """)
     Member findMemberWithUserAndProject(UUID userId, UUID projectId);
 
+    @Query("""
+            SELECT m FROM Member m 
+            WHERE ( :#{#filter.search == null || #filter.search.isEmpty()} = TRUE
+                OR LOWER(m.role) LIKE LOWER(CONCAT('%', :#{#filter.search}, '%')) 
+            )
+            AND m.project.id = :projectId
+
+""")
+    Page<Member> getAllMembersWithProject(UUID projectId, Pageable pageable, MemberFilter filter);
+
 }

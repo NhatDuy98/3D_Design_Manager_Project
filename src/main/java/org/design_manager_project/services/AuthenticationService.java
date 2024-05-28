@@ -23,7 +23,9 @@ public class AuthenticationService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
+    private final UserService userService;
     public UserDTO register(UserRequestForRegister userRequestForRegister){
+        userService.validateEmailCreate(userRequestForRegister.getEmail());
         User user = userMapper.convertForRegister(userRequestForRegister);
         user.setRole(AuthRole.USER);
         user.setPassword(passwordEncoder.encode(userRequestForRegister.getPassword()));

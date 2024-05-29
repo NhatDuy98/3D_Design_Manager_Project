@@ -12,7 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -32,14 +31,6 @@ public abstract class BaseController<E extends BaseModel,
     @GetMapping
     public ResponseEntity<ApiResponse> getPage(FT ft){
         Page<DTO> dtos = baseService.findAllWithPage(ft);
-
-        if (dtos.isEmpty()){
-            List<ApiResponse> apiResponses = new ArrayList<>();
-
-            return ResponseEntity.badRequest().body(
-                    ApiResponse.success(apiResponses)
-            );
-        }
 
         return ResponseEntity.ok(ApiResponse.success(dtos));
     }

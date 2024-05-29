@@ -16,16 +16,8 @@ public interface ProjectRepository extends BaseRepository<Project, ProjectFilter
     @Query("""
         SELECT p FROM Project p 
         WHERE (:#{#filter.search == null || #filter.search.isEmpty()} = TRUE 
-            OR LOWER(p.projectName) LIKE LOWER(CONCAT('%', :#{#filter.search}, '%'))
-        )
+            OR LOWER(p.projectName) LIKE LOWER(CONCAT('%', :#{#filter.search}, '%')))
+        AND :#{#filter.id == null} = TRUE OR p.space.id = :#{#filter.id}
 """)
     Page<Project> findAllWithFilter(Pageable pageable, ProjectFilter filter);
-
-    @Query("""
-    SELECT p FROM Project p 
-    WHERE (:#{#filter.search == null || #filter.search.isEmpty()} = TRUE 
-        OR LOWER(p.projectName) LIKE LOWER(CONCAT('%', :#{#filter.search}, '%'))) 
-    AND p.space.id = :spaceId
-""")
-    Page<Project> findAllProjectsWithSpace(Pageable pageable, ProjectFilter filter, UUID spaceId);
 }

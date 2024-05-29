@@ -31,7 +31,10 @@ public class AuthenticationService {
         user.setPassword(passwordEncoder.encode(userRequestForRegister.getPassword()));
 
         userRepository.save(user);
-        return userMapper.convertToDTO(user);
+        String jwtToken = jwtService.generateToken(user);
+        UserDTO userDTO = userMapper.convertToDTO(user);
+        userDTO.setToken(jwtToken);
+        return userDTO;
     }
 
     public AuthenticationResponse login(UserRequestForLogin userRequestForLogin){

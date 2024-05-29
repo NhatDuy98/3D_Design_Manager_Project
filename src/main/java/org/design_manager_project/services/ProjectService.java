@@ -107,6 +107,8 @@ public class ProjectService extends BaseService<Project, ProjectDTO, ProjectFilt
     }
 
     public Page<ProjectDTO> findAllProjectsWithSpace(ProjectFilter filter, UUID spaceId) {
-        return projectMapper.convertPageToDTO(projectRepository.findAllProjectsWithSpace(filter.getPageable(), filter, spaceId));
+        filter.setId(spaceId);
+
+        return projectMapper.convertPageToDTO(projectRepository.findAllWithFilter(filter.getPageable(), filter));
     }
 }

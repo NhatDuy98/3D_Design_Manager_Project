@@ -25,8 +25,8 @@ public class UserService extends BaseService<User, UserDTO, UserFilter, UUID>{
         this.userMapper = userMapper;
     }
 
-    private void validateEmailCreate(UserDTO userRequest){
-        User e = userRepository.findUserByEmail(userRequest.getEmail());
+    public void validateEmailCreate(String email){
+        User e = userRepository.findUserByEmail(email);
 
         if (e != null){
             throw new BadRequestException(Constants.EMAIL_ALREADY_EXISTS);
@@ -61,9 +61,15 @@ public class UserService extends BaseService<User, UserDTO, UserFilter, UUID>{
 
     @Override
     public UserDTO create(UserDTO request) {
-        validateEmailCreate(request);
+        validateEmailCreate(request.getEmail());
 
         return super.create(request);
+    }
+
+    @Override
+    public List<UserDTO> createAll(List<UserDTO> list) {
+        list.forEach(e -> validateEmailCreate(e.getEmail()));
+        return super.createAll(list);
     }
 
     @Override

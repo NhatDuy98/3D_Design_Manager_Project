@@ -86,5 +86,22 @@ public class ApiResponse {
                 .status(HttpStatus.NO_CONTENT)
                 .build();
     }
+    public static ApiResponse forbidden(){
+        return ApiResponse.builder()
+                .message("Forbidden")
+                .code(HttpStatus.FORBIDDEN.value())
+                .status(HttpStatus.FORBIDDEN)
+                .success(false)
+                .build();
+    }
+
+    public static ApiResponse unauthorized(){
+        return ApiResponse.builder()
+                .message("UnAuthorized")
+                .code(HttpStatus.UNAUTHORIZED.value())
+                .status(HttpStatus.UNAUTHORIZED)
+                .success(false)
+                .build();
+    }
 
 }

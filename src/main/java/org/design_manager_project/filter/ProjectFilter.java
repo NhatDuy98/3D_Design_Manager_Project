@@ -1,4 +1,4 @@
-package org.design_manager_project.dtos.user.request;
+package org.design_manager_project.filter;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -11,6 +11,8 @@ import java.util.UUID;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserRequestWithID {
+public class ProjectFilter extends BaseFilter{
     private UUID id;
+    private String startDate;
+    private String endDate;
 }

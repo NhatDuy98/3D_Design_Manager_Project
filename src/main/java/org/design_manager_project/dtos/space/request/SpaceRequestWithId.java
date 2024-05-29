@@ -1,4 +1,4 @@
-package org.design_manager_project.dtos.user.request;
+package org.design_manager_project.dtos.space.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -11,6 +11,6 @@ import java.util.UUID;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserRequestWithID {
+public class SpaceRequestWithId {
     private UUID id;
 }

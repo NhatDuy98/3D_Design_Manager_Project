@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
@@ -19,4 +20,11 @@ public interface MemberRepository extends BaseRepository<Member, MemberFilter, U
 
 """)
     Page<Member> findAllWithFilter(Pageable pageable, MemberFilter memberFilter);
+
+    @Query("""
+            SELECT m FROM Member m 
+            WHERE m.space.id = :spaceId AND m.user.id = :userId
+
+""")
+    Optional<Member> findMemberWithSpaceAndUser(UUID spaceId, UUID userId);
 }

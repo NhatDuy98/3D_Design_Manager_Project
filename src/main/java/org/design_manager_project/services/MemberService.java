@@ -115,7 +115,9 @@ public class MemberService extends BaseService<Member, MemberDTO, MemberFilter, 
     }
 
     public Page<MemberDTO> getAllMembersWithProject(UUID projectId, MemberFilter filter) {
-        Page<Member> members = memberRepository.getAllMembersWithProject(projectId, filter.getPageable(), filter);
+        filter.setProjectId(projectId);
+
+        Page<Member> members = memberRepository.findAllWithFilter(filter.getPageable(), filter);
 
         return memberMapper.convertPageToDTO(members);
     }

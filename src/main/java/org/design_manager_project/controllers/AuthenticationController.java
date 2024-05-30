@@ -4,7 +4,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.design_manager_project.dtos.ApiResponse;
 import org.design_manager_project.dtos.AuthenticationResponse;
-import org.design_manager_project.dtos.user.UserDTO;
 import org.design_manager_project.dtos.user.request.UserRequestForLogin;
 import org.design_manager_project.dtos.user.request.UserRequestForRegister;
 import org.design_manager_project.services.AuthenticationService;
@@ -16,13 +15,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping( "/api/home")
 @RequiredArgsConstructor
-public class HomeController {
+public class AuthenticationController {
 
     private final AuthenticationService authenticationService;
 
     @PostMapping("/register")
     public ApiResponse register(@RequestBody @Valid UserRequestForRegister userRequestForRegister){
-        UserDTO userDTO = authenticationService.register(userRequestForRegister);
+        AuthenticationResponse userDTO = authenticationService.register(userRequestForRegister);
 
         return ApiResponse.created(userDTO);
     }

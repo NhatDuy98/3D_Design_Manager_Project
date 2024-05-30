@@ -8,12 +8,10 @@ import org.design_manager_project.models.entity.Space;
 import org.design_manager_project.models.enums.Role;
 import org.design_manager_project.repositories.SpaceRepository;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -26,12 +24,9 @@ public class SpaceService extends BaseService<Space, SpaceDTO, SpaceFilter, UUID
         this.spaceRepository = spaceRepository;
         this.spaceMapper = spaceMapper;
     }
-
-    public Optional<SpaceDTO> getSpaceWithUserId(UUID spaceId, UUID userId){
-        return spaceMapper.convertOptional(spaceRepository.findSpaceWithUserId(spaceId, userId));
-    }
-    public Page<SpaceDTO> getAllSpaceWithUserId(Pageable pageable, UUID userId){
-        return spaceMapper.convertPageToDTO(spaceRepository.findAllWithUserId(pageable ,userId));
+    public Page<SpaceDTO> getAllSpaceWithUserId(SpaceFilter filter, UUID userId){
+        filter.setUserId(userId);
+        return spaceMapper.convertPageToDTO(spaceRepository.findAllWithFilter(filter.getPageable() ,filter));
     }
 
     private List<Member> createMemberDefault(Space space){

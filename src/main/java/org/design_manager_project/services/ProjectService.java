@@ -111,4 +111,10 @@ public class ProjectService extends BaseService<Project, ProjectDTO, ProjectFilt
 
         return projectMapper.convertPageToDTO(projectRepository.findAllWithFilter(filter.getPageable(), filter));
     }
+
+    public Page<ProjectDTO> findAllProjectsWithUser(ProjectFilter filter, UUID id) {
+        filter.setUserId(id);
+
+        return projectMapper.convertPageToDTO(projectRepository.findAllProjectsWithUser(filter.getPageable(), filter));
+    }
 }

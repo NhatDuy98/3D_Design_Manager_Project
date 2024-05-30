@@ -1,5 +1,6 @@
 package org.design_manager_project.mappers;
 
+import org.design_manager_project.dtos.AuthenticationResponse;
 import org.design_manager_project.dtos.user.UserDTO;
 import org.design_manager_project.dtos.user.request.UserRequestForRegister;
 import org.design_manager_project.models.entity.User;
@@ -28,6 +29,9 @@ public interface UserMapper extends BaseMapper<User, UserDTO>{
 
     @Mapping(target = "isActive", constant = "true")
     User convertForRegister(UserRequestForRegister userRequestForRegister);
+
+
+    AuthenticationResponse convertForAuth(User user);
 
     @Override
     default Page<UserDTO> convertPageToDTO(Page<User> pageE){

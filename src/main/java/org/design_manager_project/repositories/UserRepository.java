@@ -14,13 +14,13 @@ public interface UserRepository extends BaseRepository<User, UserFilter, UUID> {
     @Override
     @Query("""
             SELECT u FROM User u
-            WHERE (LOWER(u.firstName) LIKE LOWER(CONCAT('%',:#{#filter.search},'%')) 
-            OR LOWER(u.lastName) LIKE LOWER(CONCAT('%',:#{#filter.search},'%')) 
-            OR LOWER(u.email) LIKE LOWER(CONCAT('%',:#{#filter.search},'%')) )
-            AND u.isActive = :#{#filter.active}
+            WHERE (:#{#filter.search == null || #filter.search.isEmpty()} = TRUE 
+                OR (LOWER(u.firstName) LIKE LOWER(CONCAT('%',:#{#filter.search},'%')) 
+                    OR LOWER(u.lastName) LIKE LOWER(CONCAT('%',:#{#filter.search},'%')) 
+                    OR LOWER(u.email) LIKE LOWER(CONCAT('%',:#{#filter.search},'%'))))
+            AND (:#{#filter.active == null} = TRUE OR u.isActive = :#{#filter.active})
     """)
     Page<User> findAllWithFilter(Pageable pageable, UserFilter filter);
-
 
     User findUserByEmail(String email);
 

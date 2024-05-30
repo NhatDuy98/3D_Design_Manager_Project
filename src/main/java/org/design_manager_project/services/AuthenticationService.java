@@ -2,7 +2,6 @@ package org.design_manager_project.services;
 
 import lombok.RequiredArgsConstructor;
 import org.design_manager_project.dtos.AuthenticationResponse;
-import org.design_manager_project.dtos.user.UserDTO;
 import org.design_manager_project.dtos.user.request.UserRequestForLogin;
 import org.design_manager_project.dtos.user.request.UserRequestForRegister;
 import org.design_manager_project.mappers.UserMapper;
@@ -19,12 +18,12 @@ import org.springframework.stereotype.Service;
 public class AuthenticationService {
 
     private final UserRepository userRepository;
-    private final UserMapper userMapper;
+    private final UserMapper userMapper = UserMapper.INSTANCE;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
     private final UserService userService;
-    public UserDTO register(UserRequestForRegister userRequestForRegister){
+    public AuthenticationResponse register(UserRequestForRegister userRequestForRegister){
         userService.validateEmailCreate(userRequestForRegister.getEmail());
         User user = userMapper.convertForRegister(userRequestForRegister);
         user.setRole(AuthRole.USER);
@@ -32,7 +31,7 @@ public class AuthenticationService {
 
         userRepository.save(user);
         String jwtToken = jwtService.generateToken(user);
-        UserDTO userDTO = userMapper.convertToDTO(user);
+        AuthenticationResponse userDTO = userMapper.convertForAuth(user);
         userDTO.setToken(jwtToken);
         return userDTO;
     }
@@ -45,9 +44,9 @@ public class AuthenticationService {
                 )
         );
         User user = userRepository.findUserByEmail(userRequestForLogin.getEmail());
+        AuthenticationResponse userDTO = userMapper.convertForAuth(user);
         String jwtToken = jwtService.generateToken(user);
-        return AuthenticationResponse.builder()
-                .token(jwtToken)
-                .build();
+        userDTO.setToken(jwtToken);
+        return userDTO;
     }
 }

@@ -37,5 +37,4 @@ public class UserDTO extends BaseDTO<UUID> {
 
     private String avatar;
     private Boolean isActive;
-    private String token;
 }

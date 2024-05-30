@@ -20,4 +20,13 @@ public interface ProjectRepository extends BaseRepository<Project, ProjectFilter
         AND :#{#filter.id == null} = TRUE OR p.space.id = :#{#filter.id}
 """)
     Page<Project> findAllWithFilter(Pageable pageable, ProjectFilter filter);
+
+
+    @Query("""
+        SELECT p FROM Project p 
+        LEFT JOIN Member m ON p.id = m.project.id 
+        WHERE m.user.id = :#{#filter.userId}
+
+""")
+    Page<Project> findAllProjectsWithUser(Pageable pageable, ProjectFilter filter);
 }

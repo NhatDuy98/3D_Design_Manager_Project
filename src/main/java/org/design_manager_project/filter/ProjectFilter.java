@@ -13,6 +13,7 @@ import java.util.UUID;
 @NoArgsConstructor
 public class ProjectFilter extends BaseFilter{
     private UUID id;
+    private UUID userId;
     private String startDate;
     private String endDate;
 }

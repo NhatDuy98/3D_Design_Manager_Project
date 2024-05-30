@@ -7,7 +7,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import java.util.Optional;
 import java.util.UUID;
 
 @Repository
@@ -16,25 +15,10 @@ public interface SpaceRepository extends BaseRepository<Space, SpaceFilter, UUID
     @Override
     @Query("""
             SELECT s FROM Space s 
-            WHERE LOWER(s.spaceName) LIKE LOWER(CONCAT('%', :#{#spaceFilter.search},'%') ) 
+            WHERE (:#{#filter.search == null || #filter.search.isEmpty()} = TRUE 
+                OR LOWER(s.spaceName) LIKE LOWER(CONCAT('%', :#{#filter.search},'%'))) 
+            AND (:#{#filter.userId == null} = TRUE OR s.user.id = :#{#filter.userId})
 
 """)
-    Page<Space> findAllWithFilter(Pageable pageable, SpaceFilter spaceFilter);
-
-
-    @Query("""
-            SELECT s FROM Space s 
-            LEFT JOIN User u ON s.user.id = u.id 
-            WHERE u.id = :userId
-
-""")
-    Page<Space> findAllWithUserId(Pageable pageable, UUID userId);
-
-    @Query("""
-            SELECT s FROM Space s 
-            WHERE s.id = :spaceId AND s.user.id = :userId
-
-""")
-    Optional<Space> findSpaceWithUserId(UUID spaceId, UUID userId);
-
+    Page<Space> findAllWithFilter(Pageable pageable, SpaceFilter filter);
 }

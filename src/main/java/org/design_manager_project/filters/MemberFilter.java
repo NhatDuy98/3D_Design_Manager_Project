@@ -1,4 +1,4 @@
-package org.design_manager_project.filter;
+package org.design_manager_project.filters;
 
 import lombok.Getter;
 import lombok.Setter;

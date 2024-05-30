@@ -1,4 +1,4 @@
-package org.design_manager_project.dtos.space.request;
+package org.design_manager_project.filters;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -11,6 +11,7 @@ import java.util.UUID;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class SpaceRequestWithID {
-    private UUID id;
+public class SpaceFilter extends BaseFilter{
+    private String spaceName;
+    private UUID userId;
 }

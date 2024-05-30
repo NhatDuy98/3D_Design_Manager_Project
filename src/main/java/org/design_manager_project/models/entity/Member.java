@@ -1,7 +1,10 @@
 package org.design_manager_project.models.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.design_manager_project.models.BaseModel;
 import org.design_manager_project.models.enums.Role;
 
@@ -13,7 +16,6 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 @Setter
-@Builder
 @Table(name = "members")
 public class Member extends BaseModel {
 
@@ -21,7 +23,7 @@ public class Member extends BaseModel {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @ManyToOne(cascade = CascadeType.PERSIST)
+    @ManyToOne
     @JoinColumn(name = "space_id", nullable = false)
     private Space space;
 

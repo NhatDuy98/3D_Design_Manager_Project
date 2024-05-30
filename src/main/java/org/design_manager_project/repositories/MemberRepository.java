@@ -1,6 +1,6 @@
 package org.design_manager_project.repositories;
 
-import org.design_manager_project.filter.MemberFilter;
+import org.design_manager_project.filters.MemberFilter;
 import org.design_manager_project.models.entity.Member;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -16,15 +16,32 @@ public interface MemberRepository extends BaseRepository<Member, MemberFilter, U
     @Override
     @Query("""
             SELECT m FROM Member m 
-            WHERE LOWER(m.role) LIKE LOWER(CONCAT('%', :#{#memberFilter.search}, '%')) 
+            WHERE ( :#{#filter.search == null || #filter.search.isEmpty()} = TRUE
+                OR LOWER(m.role) LIKE LOWER(CONCAT('%', :#{#filter.search}, '%')) 
+            )
+            AND (:#{#filter.projectId == null} = TRUE OR m.project.id = :#{#filter.projectId})
 
 """)
-    Page<Member> findAllWithFilter(Pageable pageable, MemberFilter memberFilter);
+    Page<Member> findAllWithFilter(Pageable pageable, MemberFilter filter);
 
+<<<<<<< HEAD
     @Query("""
             SELECT m FROM Member m 
             WHERE m.space.id = :spaceId AND m.user.id = :userId
 
 """)
     Optional<Member> findMemberWithSpaceAndUser(UUID spaceId, UUID userId);
+=======
+
+>>>>>>> dea9dbf8a6b7c5571c7fb46fcc99091044abf573
+    @Query("""
+            SELECT m FROM Member m 
+            WHERE m.user.id = :userId AND m.project.id = :projectId 
+
+""")
+    Member findMemberWithUserAndProject(UUID userId, UUID projectId);
+<<<<<<< HEAD
+=======
+
+>>>>>>> dea9dbf8a6b7c5571c7fb46fcc99091044abf573
 }

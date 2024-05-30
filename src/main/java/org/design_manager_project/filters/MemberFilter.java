@@ -1,4 +1,4 @@
-package org.design_manager_project.filter;
+package org.design_manager_project.filters;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -11,9 +11,6 @@ import java.util.UUID;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ProjectFilter extends BaseFilter{
-    private UUID id;
-    private UUID userId;
-    private String startDate;
-    private String endDate;
+public class MemberFilter extends BaseFilter{
+    private UUID projectId;
 }

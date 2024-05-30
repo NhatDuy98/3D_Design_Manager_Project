@@ -5,7 +5,7 @@ import jakarta.persistence.MappedSuperclass;
 import jakarta.transaction.Transactional;
 import org.design_manager_project.dtos.BaseDTO;
 import org.design_manager_project.exeptions.BadRequestException;
-import org.design_manager_project.filter.BaseFilter;
+import org.design_manager_project.filters.BaseFilter;
 import org.design_manager_project.mappers.BaseMapper;
 import org.design_manager_project.models.BaseModel;
 import org.design_manager_project.repositories.BaseRepository;

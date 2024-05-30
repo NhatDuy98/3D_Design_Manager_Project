@@ -3,7 +3,7 @@ package org.design_manager_project.services;
 import jakarta.persistence.EntityNotFoundException;
 import org.design_manager_project.dtos.user.UserDTO;
 import org.design_manager_project.exeptions.BadRequestException;
-import org.design_manager_project.filter.UserFilter;
+import org.design_manager_project.filters.UserFilter;
 import org.design_manager_project.mappers.UserMapper;
 import org.design_manager_project.models.entity.User;
 import org.design_manager_project.repositories.UserRepository;

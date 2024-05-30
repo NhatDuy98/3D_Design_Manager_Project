@@ -9,7 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.design_manager_project.dtos.BaseDTO;
-import org.design_manager_project.dtos.space.request.SpaceRequestWithId;
+import org.design_manager_project.dtos.space.request.SpaceRequestWithID;
 import org.design_manager_project.dtos.user.request.UserRequestWithID;
 
 import java.time.LocalDate;
@@ -33,6 +33,6 @@ public class ProjectDTO extends BaseDTO<UUID> {
 
     private LocalDate startDate;
     private LocalDate endDate;
-    private SpaceRequestWithId space;
+    private SpaceRequestWithID space;
     private UserRequestWithID user;
 }

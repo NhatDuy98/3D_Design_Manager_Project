@@ -2,7 +2,10 @@ package org.design_manager_project.controllers;
 
 import org.design_manager_project.dtos.ApiResponse;
 import org.design_manager_project.dtos.space.SpaceDTO;
+<<<<<<< HEAD
 import org.design_manager_project.filters.ProjectFilter;
+=======
+>>>>>>> dea9dbf8a6b7c5571c7fb46fcc99091044abf573
 import org.design_manager_project.filters.SpaceFilter;
 import org.design_manager_project.models.entity.Space;
 import org.design_manager_project.services.ProjectService;

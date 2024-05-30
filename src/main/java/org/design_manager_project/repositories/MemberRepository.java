@@ -24,16 +24,24 @@ public interface MemberRepository extends BaseRepository<Member, MemberFilter, U
 """)
     Page<Member> findAllWithFilter(Pageable pageable, MemberFilter filter);
 
+<<<<<<< HEAD
     @Query("""
             SELECT m FROM Member m 
             WHERE m.space.id = :spaceId AND m.user.id = :userId
 
 """)
     Optional<Member> findMemberWithSpaceAndUser(UUID spaceId, UUID userId);
+=======
+
+>>>>>>> dea9dbf8a6b7c5571c7fb46fcc99091044abf573
     @Query("""
             SELECT m FROM Member m 
             WHERE m.user.id = :userId AND m.project.id = :projectId 
 
 """)
     Member findMemberWithUserAndProject(UUID userId, UUID projectId);
+<<<<<<< HEAD
+=======
+
+>>>>>>> dea9dbf8a6b7c5571c7fb46fcc99091044abf573
 }

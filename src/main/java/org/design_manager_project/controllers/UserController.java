@@ -2,8 +2,11 @@ package org.design_manager_project.controllers;
 
 import org.design_manager_project.dtos.ApiResponse;
 import org.design_manager_project.dtos.user.UserDTO;
+<<<<<<< HEAD
 import org.design_manager_project.filters.ProjectFilter;
 import org.design_manager_project.filters.SpaceFilter;
+=======
+>>>>>>> dea9dbf8a6b7c5571c7fb46fcc99091044abf573
 import org.design_manager_project.filters.UserFilter;
 import org.design_manager_project.models.entity.User;
 import org.design_manager_project.services.ProjectService;

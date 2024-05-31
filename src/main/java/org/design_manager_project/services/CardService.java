@@ -7,6 +7,7 @@ import org.design_manager_project.filters.CardFilter;
 import org.design_manager_project.mappers.CardMapper;
 import org.design_manager_project.models.entity.Card;
 import org.design_manager_project.models.entity.Member;
+import org.design_manager_project.models.enums.Status;
 import org.design_manager_project.repositories.CardRepository;
 import org.design_manager_project.repositories.MemberRepository;
 import org.springframework.data.domain.Page;
@@ -62,6 +63,10 @@ public class CardService extends BaseService<Card, CardDTO, CardFilter, UUID>{
         validateMemberAndProject(dto);
         validateDate(dto);
 
+        if (dto.getStatus() == null){
+            dto.setStatus(String.valueOf(Status.OPENED));
+        }
+
         return super.create(dto);
     }
 
@@ -70,6 +75,10 @@ public class CardService extends BaseService<Card, CardDTO, CardFilter, UUID>{
         list.forEach(e -> {
             validateMemberAndProject(e);
             validateDate(e);
+
+            if (e.getStatus() == null){
+                e.setStatus(String.valueOf(Status.OPENED));
+            }
         });
 
         return super.createAll(list);

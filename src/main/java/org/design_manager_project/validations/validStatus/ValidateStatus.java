@@ -19,6 +19,9 @@ public class ValidateStatus implements ConstraintValidator<ValidStatus, String> 
     @Override
     public boolean isValid(String s, ConstraintValidatorContext constraintValidatorContext) {
         for (var value: Status.values()){
+            if (s == null){
+                s = String.valueOf(Status.OPENED);
+            }
             if (Objects.equals(s, value.name())){
                 return true;
             }

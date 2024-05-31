@@ -54,7 +54,7 @@ public class MemberService extends BaseService<Member, MemberDTO, MemberFilter, 
 
             Project project = projectRepository.findById(dto.getProject().getId()).orElseThrow(() -> new EntityNotFoundException(DATA_NOT_FOUND));
 
-            if (project.getSpace().getId() != dto.getSpace().getId()){
+            if (!project.getSpace().getId().equals(dto.getSpace().getId())){
                 throw new BadRequestException(BAD_REQUEST);
             }
         }

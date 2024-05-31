@@ -6,9 +6,6 @@
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
 
     <include file="db/changelog/2024/05/02-01-changelog.xml"/>
-<<<<<<< HEAD
     <include file="db/changelog/2024/05/23-01-changelog.xml"/>
-=======
->>>>>>> dea9dbf8a6b7c5571c7fb46fcc99091044abf573
     <include file="db/changelog/2024/05/24-01-changelog.xml"/>
 </databaseChangeLog>

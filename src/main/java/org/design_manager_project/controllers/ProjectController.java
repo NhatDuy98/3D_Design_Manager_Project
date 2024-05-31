@@ -1,9 +1,14 @@
 package org.design_manager_project.controllers;
 
+import org.design_manager_project.dtos.ApiResponse;
 import org.design_manager_project.dtos.project.ProjectDTO;
+import org.design_manager_project.filters.MemberFilter;
 import org.design_manager_project.filters.ProjectFilter;
 import org.design_manager_project.models.entity.Project;
+import org.design_manager_project.services.MemberService;
 import org.design_manager_project.services.ProjectService;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -14,9 +19,19 @@ import java.util.UUID;
 public class ProjectController extends BaseController<Project, ProjectDTO, ProjectFilter, UUID> {
 
     private final ProjectService projectService;
+    private final MemberService memberService;
 
-    protected ProjectController(ProjectService projectService) {
+    protected ProjectController(ProjectService projectService, MemberService memberService) {
         super(projectService);
         this.projectService = projectService;
+        this.memberService = memberService;
+    }
+
+    @GetMapping("/{id}/members")
+    public ApiResponse getAllMembersWithProject(
+            @PathVariable("id") UUID projectId,
+            MemberFilter filter
+    ){
+        return ApiResponse.success(memberService.getAllMembersWithProject(projectId, filter));
     }
 }

@@ -20,6 +20,7 @@ public interface MemberRepository extends BaseRepository<Member, MemberFilter, U
                 OR LOWER(m.role) LIKE LOWER(CONCAT('%', :#{#filter.search}, '%')) 
             )
             AND (:#{#filter.projectId == null} = TRUE OR m.project.id = :#{#filter.projectId})
+            AND (m.deletedAt = null)
 
 """)
     Page<Member> findAllWithFilter(Pageable pageable, MemberFilter filter);

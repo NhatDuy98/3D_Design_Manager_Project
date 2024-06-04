@@ -13,5 +13,6 @@ import java.util.UUID;
 @NoArgsConstructor
 public class PrintFilter extends BaseFilter {
     private UUID cardId;
+    private UUID projectId;
     private UUID latestId;
 }

@@ -2,12 +2,14 @@ package org.design_manager_project.controllers;
 
 import org.design_manager_project.dtos.ApiResponse;
 import org.design_manager_project.dtos.print.PrintDTO;
+import org.design_manager_project.dtos.version.VersionDTO;
 import org.design_manager_project.filters.PrintFilter;
 import org.design_manager_project.models.entity.Print;
 import org.design_manager_project.services.PrintService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -29,11 +31,12 @@ public class PrintController extends BaseController<Print, PrintDTO, PrintFilter
         return ResponseEntity.ok(ApiResponse.noContent());
     }
 
-    @DeleteMapping("/versions/delete-bulk")
+    @DeleteMapping("/{printID}/versions/delete-bulk")
     public ResponseEntity<ApiResponse> deleteVersionBulk(
-            @RequestBody PrintDTO dto
+            @PathVariable("printID") UUID printID,
+            @RequestBody List<VersionDTO> dto
     ){
-        printService.deleteVersionBulk(dto);
+        printService.deleteVersionBulk(printID, dto);
 
         return ResponseEntity.ok(ApiResponse.noContent());
     }

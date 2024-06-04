@@ -15,10 +15,11 @@ public interface PrintRepository extends BaseRepository<Print, PrintFilter, UUID
     @Override
     @Query("""
         SELECT p FROM Print p 
-        LEFT JOIN Version v ON p.id = v.print.id 
-        WHERE (:#{#filter.cardId == null} = TRUE OR :#{#filter.cardId} = p.card.id) 
-        AND (:#{#filter.latestId == null} = TRUE OR :#{#filter.latestId} = v.id)
+        LEFT JOIN Card c ON c.id = p.card.id  
+        WHERE (:#{#filter.cardId == NULL} = TRUE OR :#{#filter.cardId} = p.card.id) 
+        AND (:#{#filter.projectId == NULL} = TRUE OR :#{#filter.projectId} = c.project.id) 
 
 """)
     Page<Print> findAllWithFilter(Pageable pageable, PrintFilter filter);
+
 }

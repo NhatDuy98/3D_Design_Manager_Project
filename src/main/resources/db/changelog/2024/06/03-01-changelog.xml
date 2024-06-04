@@ -27,5 +27,11 @@
             </column>
         </addColumn>
     </changeSet>
+    <changeSet id="1717402395010-1"
+               author="develop">
+        <dropNotNullConstraint columnDataType="uuid"
+                               columnName="latest_id"
+                               tableName="prints"/>
+    </changeSet>
 
 </databaseChangeLog>

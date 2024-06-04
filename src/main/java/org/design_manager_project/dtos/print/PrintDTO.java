@@ -21,5 +21,5 @@ public class PrintDTO extends BaseDTO<UUID> {
     private UUID latestId;
     private CardRequestWithID card;
     private MemberRequestWithID member;
-    private List<VersionDTO> versions = new ArrayList<>();
+    private List<VersionDTO> images = new ArrayList<>();
 }

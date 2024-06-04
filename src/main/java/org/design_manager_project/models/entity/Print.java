@@ -26,7 +26,7 @@ public class Print extends BaseModel {
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
-    @Column(name = "latest_id", nullable = false)
+    @Column(name = "latest_id")
     private UUID latestId;
 
     @OneToMany(mappedBy = "print", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
@@ -34,14 +34,18 @@ public class Print extends BaseModel {
 
     @OneToMany(mappedBy = "print")
     private List<LabelPrint> labelPrints;
-
-    @PrePersist
-    @PreUpdate
-    private void updateLatestId(){
-        if (versions != null && !versions.isEmpty()){
-            versions.sort((v1, v2) -> v2.getCreatedAt().compareTo(v1.getCreatedAt()));
-            this.latestId = versions.get(0).getId();
-        }
-    }
+//
+//    @PrePersist
+//    @PreUpdate
+//    private void updateLatestId(){
+//        if (versions != null && !versions.isEmpty()){
+//            versions.sort((v1, v2) -> v2.getCreatedAt().compareTo(v1.getCreatedAt()));
+//            this.latestId = versions.get(0).getId();
+//        }
+//    }
+//    @PostPersist
+//    private void setLatestIdAfterPersist() {
+//        updateLatestId();
+//    }
 
 }

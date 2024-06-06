@@ -21,22 +21,32 @@ public class PrintController extends BaseController<Print, PrintDTO, PrintFilter
         this.printService = printService;
     }
 
-    @DeleteMapping("/{printID}/versions/{versionID}")
-    public ResponseEntity<ApiResponse> deleteVersion(
-            @PathVariable("printID") UUID printID,
-            @PathVariable("versionID") UUID versionID
+    @PutMapping("/{printId}/versions/{versionId}")
+    public ResponseEntity<ApiResponse> updateLatestVersion(
+            @PathVariable("printId") UUID printId,
+            @PathVariable("versionId") UUID versionId
     ){
-        printService.deleteVersion(printID, versionID);
+        PrintDTO printDTO = printService.updateLatestVersion(printId, versionId);
+
+        return ResponseEntity.ok(ApiResponse.success(printDTO));
+    }
+
+    @DeleteMapping("/{printId}/versions/{versionId}")
+    public ResponseEntity<ApiResponse> deleteVersion(
+            @PathVariable("printId") UUID printId,
+            @PathVariable("versionId") UUID versionId
+    ){
+        printService.deleteVersion(printId, versionId);
 
         return ResponseEntity.ok(ApiResponse.noContent());
     }
 
-    @DeleteMapping("/{printID}/versions/delete-bulk")
+    @DeleteMapping("/{printId}/versions/delete-bulk")
     public ResponseEntity<ApiResponse> deleteVersionBulk(
-            @PathVariable("printID") UUID printID,
+            @PathVariable("printId") UUID printId,
             @RequestBody List<VersionDTO> dto
     ){
-        printService.deleteVersionBulk(printID, dto);
+        printService.deleteVersionBulk(printId, dto);
 
         return ResponseEntity.ok(ApiResponse.noContent());
     }

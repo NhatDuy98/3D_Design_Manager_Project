@@ -4,6 +4,7 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import org.design_manager_project.dtos.ApiResponse;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -17,6 +18,8 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @RestControllerAdvice
@@ -97,6 +100,24 @@ public class GlobalExceptionHandler {
         String message = "Invalid input: " + ex.getMessage();
         return ResponseEntity.badRequest().body(
                 ApiResponse.badRequest(message)
+        );
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<ApiResponse> handleDataIntegrityViolationException(DataIntegrityViolationException ex) {
+        String message = ex.getMessage();
+        String detailedMessage = "Field cannot be null";
+
+        Pattern pattern = Pattern.compile("null value in column \"(\\w+)\" of relation");
+        Matcher matcher = pattern.matcher(message);
+        if (matcher.find()) {
+            String fieldName = matcher.group(1);
+            detailedMessage = "Field cannot be null: " + fieldName;
+        }
+
+        return ResponseEntity.badRequest().body(
+                ApiResponse.badRequest(detailedMessage)
         );
     }
 

@@ -16,7 +16,6 @@ public interface PrintMapper extends BaseMapper<Print, PrintDTO> {
     PrintMapper INSTANCE = Mappers.getMapper(PrintMapper.class);
 
     @Override
-    @Mapping(source = "images", target = "versions")
     Print convertToEntity(PrintDTO printDTO);
 
     @Override

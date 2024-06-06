@@ -33,5 +33,22 @@
                                columnName="latest_id"
                                tableName="prints"/>
     </changeSet>
+    <changeSet id="1717642895135-1"
+               author="develop">
+        <addColumn tableName="prints">
+            <column name="image"
+                    type="VARCHAR(255)"/>
+        </addColumn>
+    </changeSet>
+    <changeSet id="1717642895135-2"
+               author="develop">
+        <addNotNullConstraint columnName="image"
+                              tableName="prints"/>
+    </changeSet>
+    <changeSet id="1717642895135-3"
+               author="develop">
+        <dropColumn columnName="latest_id"
+                    tableName="prints"/>
+    </changeSet>
 
 </databaseChangeLog>

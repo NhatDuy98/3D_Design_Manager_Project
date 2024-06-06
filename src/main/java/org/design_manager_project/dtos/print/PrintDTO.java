@@ -18,7 +18,8 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PrintDTO extends BaseDTO<UUID> {
-    private UUID latestId;
+
+    private String image;
     private CardRequestWithID card;
     private MemberRequestWithID member;
     private List<VersionDTO> images = new ArrayList<>();

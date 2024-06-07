@@ -1,7 +1,10 @@
 package org.design_manager_project.models.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.design_manager_project.models.BaseModel;
 
 @Entity
@@ -9,7 +12,6 @@ import org.design_manager_project.models.BaseModel;
 @NoArgsConstructor
 @Getter
 @Setter
-@Builder
 @Table(name = "label_prints")
 public class LabelPrint extends BaseModel {
 
@@ -22,12 +24,12 @@ public class LabelPrint extends BaseModel {
     private Print print;
 
     @Column(name = "x_coordinate", nullable = false)
-    private double xCoordinate;
+    private Double xCoordinate;
 
     @Column(name = "y_coordinate", nullable = false)
-    private double yCoordinate;
+    private Double yCoordinate;
 
     @Column(name = "z_coordinate", nullable = false)
-    private double zCoordinate;
+    private Double zCoordinate;
 
 }

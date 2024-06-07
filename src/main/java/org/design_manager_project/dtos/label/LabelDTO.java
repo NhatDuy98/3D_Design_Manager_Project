@@ -1,5 +1,8 @@
 package org.design_manager_project.dtos.label;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,7 +16,11 @@ import java.util.UUID;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class LabelDTO extends BaseDTO<UUID> {
+
+    @Pattern(regexp = "^\\S+(\\s+[^\\s]+)*$",message = "Format error")
+    @Size(min = 1, max = 50, message = "Size name error")
     private String labelName;
     private String color;
     private ProjectRequestWithID project;

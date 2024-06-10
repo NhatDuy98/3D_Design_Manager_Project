@@ -26,12 +26,14 @@ public class PrintService extends BaseService<Print, PrintDTO, PrintFilter, UUID
     private final VersionRepository versionRepository;
     private final CardRepository cardRepository;
     private static final PrintMapper printMapper = PrintMapper.INSTANCE;
+    private final FileService fileService;
 
-    protected PrintService(PrintRepository printRepository, PrintMapper printMapper, VersionRepository versionRepository, CardRepository cardRepository) {
+    protected PrintService(PrintRepository printRepository, PrintMapper printMapper, VersionRepository versionRepository, CardRepository cardRepository, FileService fileService) {
         super(printRepository, printMapper);
         this.printRepository = printRepository;
         this.versionRepository = versionRepository;
         this.cardRepository = cardRepository;
+        this.fileService = fileService;
     }
 
     private Version saveVersion(Print print){
@@ -49,7 +51,7 @@ public class PrintService extends BaseService<Print, PrintDTO, PrintFilter, UUID
             Version version = new Version();
 
             version.setPrint(print);
-            version.setImage(e.getImage());
+            version.setImage(fileService.upload(e.getImage()));
 
             return version;
         }).toList();
@@ -78,7 +80,7 @@ public class PrintService extends BaseService<Print, PrintDTO, PrintFilter, UUID
         if (!dto.getImages().isEmpty()){
             Print print = printMapper.convertToEntity(dto);
 
-            print.setImage(dto.getImages().get(dto.getImages().size() - 1).getImage());
+            print.setImage(fileService.upload(dto.getImages().get(dto.getImages().size() - 1).getImage()));
 
             printRepository.save(print);
 
@@ -111,7 +113,7 @@ public class PrintService extends BaseService<Print, PrintDTO, PrintFilter, UUID
         if (!dto.getImages().isEmpty()){
             Print print = printMapper.updateEntity(dto, printRepo);
 
-            print.setImage(dto.getImages().get(dto.getImages().size() - 1).getImage());
+            print.setImage(fileService.upload(dto.getImages().get(dto.getImages().size() - 1).getImage()));
 
             printRepository.save(print);
 

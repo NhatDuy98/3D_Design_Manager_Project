@@ -2,6 +2,7 @@ package org.design_manager_project.controllers;
 
 import jakarta.persistence.MappedSuperclass;
 import jakarta.validation.Valid;
+import lombok.SneakyThrows;
 import org.design_manager_project.dtos.ApiResponse;
 import org.design_manager_project.dtos.BaseDTO;
 import org.design_manager_project.filters.BaseFilter;
@@ -64,12 +65,14 @@ public abstract class BaseController<E extends BaseModel,
         return ResponseEntity.ok(ApiResponse.success(baseService.updateAll(dtos)));
     }
 
+    @SneakyThrows
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse> delete(@PathVariable("id") ID id){
         baseService.deleteById(id);
         return ResponseEntity.ok(ApiResponse.noContent());
     }
 
+    @SneakyThrows
     @DeleteMapping("/delete-bulk")
     public ResponseEntity<ApiResponse> deleteAll(
             @RequestBody List<DTO> dtos

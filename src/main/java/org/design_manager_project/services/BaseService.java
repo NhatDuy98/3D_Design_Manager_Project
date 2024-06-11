@@ -1,5 +1,6 @@
 package org.design_manager_project.services;
 
+import io.minio.errors.MinioException;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.transaction.Transactional;
@@ -118,12 +119,12 @@ public abstract class BaseService<E extends BaseModel,
 
 
     @Transactional
-    public void deleteById(ID id){
+    public void deleteById(ID id) throws MinioException {
         baseRepository.deleteById(id);
     }
 
     @Transactional
-    public void deleteAll(List<ID> ids){
+    public void deleteAll(List<ID> ids) throws MinioException {
         baseRepository.deleteAllById(ids);
     }
 

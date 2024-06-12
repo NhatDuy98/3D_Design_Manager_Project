@@ -43,6 +43,15 @@ public class ApiResponse {
                 .build();
     }
 
+    public static ApiResponse success(){
+        return ApiResponse.builder()
+                .message(Constants.SUCCESS)
+                .code(HttpStatus.OK.value())
+                .status(HttpStatus.OK)
+                .data(null)
+                .build();
+    }
+
     public static ApiResponse badRequest(String message){
         return ApiResponse.builder()
                 .message(message)

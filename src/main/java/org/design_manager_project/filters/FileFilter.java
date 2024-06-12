@@ -11,4 +11,6 @@ import lombok.Setter;
 @NoArgsConstructor
 public class FileFilter extends BaseFilter{
     private String fileUrl;
+    private String destinationDir;
+    private String fileName;
 }

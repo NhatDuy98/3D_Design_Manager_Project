@@ -36,6 +36,17 @@ public class FileController {
         return ResponseEntity.ok(ApiResponse.success(fileService.getFile(id)));
     }
 
+    @GetMapping("/{id}/download")
+    public ResponseEntity<ApiResponse> downloadFile(
+            @PathVariable("id") UUID id,
+            FileFilter filter
+    ){
+        fileService.download(id, filter);
+
+        return ResponseEntity.ok()
+                .body(ApiResponse.noContent());
+    }
+
     @PostMapping
     public ResponseEntity<ApiResponse> uploadFile(
             @ModelAttribute @Validated FileDTO dto
@@ -69,7 +80,7 @@ public class FileController {
     ){
         fileService.deleteBulk(ids);
 
-        return ResponseEntity.ok(ApiResponse.noContent());
+        return ResponseEntity.ok(ApiResponse.success());
     }
 
 }

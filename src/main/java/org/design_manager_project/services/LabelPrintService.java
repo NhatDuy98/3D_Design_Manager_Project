@@ -2,6 +2,7 @@ package org.design_manager_project.services;
 
 import jakarta.persistence.EntityNotFoundException;
 import org.design_manager_project.dtos.label_print.LabelPrintDTO;
+import org.design_manager_project.exeptions.BadRequestException;
 import org.design_manager_project.filters.LabelPrintFilter;
 import org.design_manager_project.mappers.LabelMapper;
 import org.design_manager_project.mappers.LabelPrintMapper;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.UUID;
 
+import static org.design_manager_project.utils.Constants.BAD_REQUEST;
 import static org.design_manager_project.utils.Constants.DATA_NOT_FOUND;
 
 @Service
@@ -37,17 +39,20 @@ public class LabelPrintService extends BaseService<LabelPrint, LabelPrintDTO, La
 
         return super.create(dto);
     }
-
     private LabelPrintDTO createWithoutExistLabel(LabelPrintDTO dto){
         Label label = labelMapper.convertToEntity(dto.getLabel());
 
         labelRepository.save(label);
 
-        LabelPrint labelPrint = mapper.convertToEntity(dto);
-        labelPrint.setLabel(label);
-        labelPrintRepository.save(labelPrint);
+        if (label.getId() != null){
+            LabelPrint labelPrint = mapper.convertToEntity(dto);
+            labelPrint.setLabel(label);
+            labelPrintRepository.save(labelPrint);
 
-        return mapper.convertToDTO(labelPrint);
+            return mapper.convertToDTO(labelPrint);
+        }else {
+            throw new BadRequestException(BAD_REQUEST);
+        }
     }
 
     @Override

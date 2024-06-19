@@ -11,7 +11,6 @@ import org.design_manager_project.models.entity.Project;
 import org.design_manager_project.models.enums.Role;
 import org.design_manager_project.repositories.MemberRepository;
 import org.design_manager_project.repositories.ProjectRepository;
-import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -117,11 +116,7 @@ public class MemberService extends BaseService<Member, MemberDTO, MemberFilter, 
         memberRepository.saveAll(members);
     }
 
-    public List<UserOnlineDTO> getAllMembersWithProject(UUID projectId, MemberFilter filter) {
-        filter.setProjectId(projectId);
-
-        Page<Member> members = memberRepository.findAllWithFilter(filter.getPageable(), filter);
-
-        return onlOffService.getOnlineUsersWithProject(members.map(e -> e.getUser()).toList());
+    public List<UserOnlineDTO> getAllMembersOnlineWithProject(UUID projectId) {
+        return onlOffService.getOnlineUsersWithProject(projectId);
     }
 }

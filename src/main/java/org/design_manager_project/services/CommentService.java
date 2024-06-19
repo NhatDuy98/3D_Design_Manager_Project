@@ -2,6 +2,7 @@ package org.design_manager_project.services;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.design_manager_project.dtos.ApiResponse;
 import org.design_manager_project.dtos.comment.CommentDTO;
 import org.design_manager_project.filters.CommentFilter;
 import org.design_manager_project.mappers.CommentMapper;
@@ -52,22 +53,31 @@ public class CommentService{
         return commentMapper.convertToDTO(comment);
     }
 
-    public CommentDTO createCardComment(UUID prefixId, CommentDTO dto) {
-        return createComment(prefixId, dto, this::findAndAssignCard);
+    public void createCardComment(UUID prefixId, CommentDTO dto) {
+        simpMessageSendingOperations.convertAndSend(
+                "/topic/cards/" + prefixId + "/comments",
+                ApiResponse.success(createComment(prefixId, dto, this::findAndAssignCard))
+        );
     }
 
-    public CommentDTO createPrintComment(UUID prefixId, CommentDTO dto) {
-        return createComment(prefixId, dto, this::findAndAssignPrint);
+    public void createPrintComment(UUID prefixId, CommentDTO dto) {
+        simpMessageSendingOperations.convertAndSend(
+                "/topic/prints/" + prefixId + "/comments",
+                ApiResponse.success(createComment(prefixId, dto, this::findAndAssignPrint))
+        );
     }
 
-    public CommentDTO updateComment(UUID id, CommentDTO dto) {
+    public void updateComment(UUID id, CommentDTO dto) {
         var comment = commentRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(DATA_NOT_FOUND));
 
         comment.setContent(dto.getContent());
 
         commentRepository.save(comment);
 
-        return commentMapper.convertToDTO(comment);
+        simpMessageSendingOperations.convertAndSend(
+                "/topic/comments/" + id,
+                ApiResponse.success(commentMapper.convertToDTO(comment))
+        );
     }
 
     public void deleteComment(UUID uuid) {

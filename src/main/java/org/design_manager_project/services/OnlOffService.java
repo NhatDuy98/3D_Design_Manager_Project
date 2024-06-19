@@ -13,10 +13,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.stereotype.Service;
 
 import java.security.Principal;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListSet;
 
@@ -25,7 +22,8 @@ import java.util.concurrent.ConcurrentSkipListSet;
 @AllArgsConstructor
 public class OnlOffService {
     private final Set<UUID> onlineUsers = new ConcurrentSkipListSet<>();
-    private final Map<UUID, Set<String>> userSubcribed = new ConcurrentHashMap<>();
+    private final Map<UUID, Set<UUID>> projectOnlUsers = new ConcurrentHashMap<>();
+    private final Map<UUID, Set<String>> userSubscribed = new ConcurrentHashMap<>();
     private MemberRepository memberRepository;
     private UserRepository userRepository;
     private UserMapper userMapper = UserMapper.INSTANCE;
@@ -47,6 +45,7 @@ public class OnlOffService {
                         .build()
         );
         onlineUsers.add(userDetails.getId());
+        projectOnlUsers.put(projectId, Collections.singleton(userDetails.getId()));
     }
     private User getUserDetails(Principal principal){
         UsernamePasswordAuthenticationToken user = (UsernamePasswordAuthenticationToken) principal;
@@ -59,6 +58,13 @@ public class OnlOffService {
             User userDetails = getUserDetails(user);
             log.info("{} went offline", userDetails.getUsername());
             onlineUsers.remove(userDetails.getId());
+            Set<UUID> users = projectOnlUsers.get(projectId);
+            if (users != null){
+                users.remove(userDetails.getId());
+                if (users.isEmpty()){
+                    projectOnlUsers.remove(projectId);
+                }
+            }
             simpMessageSendingOperations.convertAndSend(
                     "/topic/status" + projectId,
                     UserOnlineDTO.builder()
@@ -75,8 +81,15 @@ public class OnlOffService {
         return onlineUsers.contains(userId);
     }
 
-    public List<UserOnlineDTO> getOnlineUsersWithProject(List<User> users){
-        return userMapper.convertToOnlineDTOs(users);
+    public List<UserOnlineDTO> getOnlineUsersWithProject(UUID projectId){
+        Set<UUID> userIds = projectOnlUsers.getOrDefault(projectId, Set.of());
+        List<User> users = userRepository.findAllById(userIds);
+        return userMapper.convertToOnlineDTOs(users).stream().map(e -> {
+            e.setStatus(String.valueOf(StatusUser.ONLINE));
+            return e;
+        }).toList();
     }
+
+
 
 }

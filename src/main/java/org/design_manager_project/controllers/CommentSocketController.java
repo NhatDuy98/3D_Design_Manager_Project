@@ -1,13 +1,11 @@
 package org.design_manager_project.controllers;
 
 import lombok.AllArgsConstructor;
-import org.design_manager_project.dtos.ApiResponse;
 import org.design_manager_project.dtos.comment.CommentDTO;
 import org.design_manager_project.services.CommentService;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
-import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Controller;
 
@@ -20,33 +18,27 @@ public class CommentSocketController {
     private final SimpMessageSendingOperations messagingTemplate;
 
     @MessageMapping("/cards/{id}/comments")
-    @SendTo("/topic/comments")
-    public ApiResponse createCardComment(
+    public void createCardComment(
             @Payload CommentDTO dto,
             @DestinationVariable("id") String cardId
     ){
-        CommentDTO commentDTO = commentService.createCardComment(UUID.fromString(cardId), dto);
-        return ApiResponse.success(commentDTO);
+        commentService.createCardComment(UUID.fromString(cardId), dto);
     }
 
     @MessageMapping("/prints/{id}/comments")
-    @SendTo("/topic/comments")
-    public ApiResponse createPrintComment(
+    public void createPrintComment(
             @Payload CommentDTO dto,
             @DestinationVariable("id") String printId
     ){
-        CommentDTO commentDTO = commentService.createPrintComment(UUID.fromString(printId), dto);
-        return ApiResponse.success(commentDTO);
+        commentService.createPrintComment(UUID.fromString(printId), dto);
     }
 
     @MessageMapping("/comments/{id}/update")
-    @SendTo("/topic/comments")
-    public ApiResponse updateComment(
+    public void updateComment(
             @Payload CommentDTO dto,
             @DestinationVariable("id") String id
     ){
-        CommentDTO commentDTO = commentService.updateComment(UUID.fromString(id), dto);
-        return ApiResponse.success(commentDTO);
+        commentService.updateComment(UUID.fromString(id), dto);
     }
 
     @MessageMapping("/comments/{id}/delete")

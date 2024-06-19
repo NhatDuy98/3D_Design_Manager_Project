@@ -2,6 +2,7 @@ package org.design_manager_project.services;
 
 import jakarta.persistence.EntityNotFoundException;
 import org.design_manager_project.dtos.member.MemberDTO;
+import org.design_manager_project.dtos.user.response.UserOnlineDTO;
 import org.design_manager_project.exeptions.BadRequestException;
 import org.design_manager_project.filters.MemberFilter;
 import org.design_manager_project.mappers.MemberMapper;
@@ -24,11 +25,13 @@ public class MemberService extends BaseService<Member, MemberDTO, MemberFilter, 
     MemberMapper memberMapper = MemberMapper.INSTANCE;
     private final ProjectRepository projectRepository;
     private final MemberRepository memberRepository;
+    private final OnlOffService onlOffService;
 
-    protected MemberService(MemberRepository memberRepository, MemberMapper memberMapper, ProjectRepository projectRepository) {
+    protected MemberService(MemberRepository memberRepository, MemberMapper memberMapper, ProjectRepository projectRepository, OnlOffService onlOffService) {
         super(memberRepository, memberMapper);
         this.memberRepository = memberRepository;
         this.projectRepository = projectRepository;
+        this.onlOffService = onlOffService;
     }
 
     private void checkDeleted(Member member){
@@ -114,11 +117,11 @@ public class MemberService extends BaseService<Member, MemberDTO, MemberFilter, 
         memberRepository.saveAll(members);
     }
 
-    public Page<MemberDTO> getAllMembersWithProject(UUID projectId, MemberFilter filter) {
+    public List<UserOnlineDTO> getAllMembersWithProject(UUID projectId, MemberFilter filter) {
         filter.setProjectId(projectId);
 
         Page<Member> members = memberRepository.findAllWithFilter(filter.getPageable(), filter);
 
-        return memberMapper.convertPageToDTO(members);
+        return onlOffService.getOnlineUsersWithProject(members.map(e -> e.getUser()).toList());
     }
 }

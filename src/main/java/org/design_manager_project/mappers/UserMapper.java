@@ -11,6 +11,7 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
 import org.mapstruct.factory.Mappers;
 import org.springframework.data.domain.Page;
 
+import java.util.List;
 import java.util.Optional;
 
 @Mapper(componentModel = "spring",
@@ -21,6 +22,7 @@ public interface UserMapper extends BaseMapper<User, UserDTO>{
 
 
     UserOnlineDTO convertToOnlineDTO(User user);
+    List<UserOnlineDTO> convertToOnlineDTOs(List<User> user);
 
     @Override
     @Mapping(target = "password", constant = "123456")

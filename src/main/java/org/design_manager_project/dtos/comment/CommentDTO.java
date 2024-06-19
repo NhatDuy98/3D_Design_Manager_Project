@@ -1,5 +1,6 @@
 package org.design_manager_project.dtos.comment;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,6 +16,7 @@ import java.util.UUID;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class CommentDTO extends BaseDTO<UUID> {
     private MemberRequestWithID member;
     private CardRequestWithID card;

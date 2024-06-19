@@ -1,6 +1,7 @@
 package org.design_manager_project.dtos.user.response;
 
 import lombok.*;
+import org.design_manager_project.models.enums.StatusUser;
 
 import java.util.UUID;
 
@@ -11,10 +12,8 @@ import java.util.UUID;
 @NoArgsConstructor
 public class UserOnlineDTO {
     private UUID id;
-    private String sessionId;
     private String lastName;
     private String firstName;
     private String email;
-    private Integer noOfNewComment;
-    private String status;
+    private String status = String.valueOf(StatusUser.ONLINE);
 }

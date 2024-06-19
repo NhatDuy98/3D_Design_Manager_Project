@@ -18,7 +18,7 @@ public class Comment extends BaseModel {
     private Member member;
 
     @ManyToOne
-    @JoinColumn(name = "card_id", nullable = false)
+    @JoinColumn(name = "card_id")
     private Card card;
 
     @ManyToOne

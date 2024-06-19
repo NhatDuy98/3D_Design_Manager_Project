@@ -2,70 +2,48 @@ package org.design_manager_project.configurations;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.design_manager_project.dtos.user.response.UserOnlineDTO;
-import org.design_manager_project.exeptions.BadRequestException;
+import lombok.extern.slf4j.Slf4j;
 import org.design_manager_project.mappers.UserMapper;
 import org.design_manager_project.repositories.UserRepository;
+import org.design_manager_project.services.OnlOffService;
 import org.springframework.context.event.EventListener;
-import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
-import org.springframework.messaging.support.GenericMessage;
-import org.springframework.messaging.support.NativeMessageHeaderAccessor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.messaging.SessionConnectedEvent;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
+import org.springframework.web.socket.messaging.SessionSubscribeEvent;
 
-import java.util.*;
-
-import static org.design_manager_project.utils.Constants.DATA_NOT_FOUND;
+import java.util.Objects;
+import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
 @Getter
+@Slf4j
 public class WebSocketEventListener {
-    private Set<UserOnlineDTO> onlineUsers;
     private static final UserMapper userMapper = UserMapper.INSTANCE;
     private final SimpMessageSendingOperations messagingTemplate;
     private final UserRepository userRepository;
+    private final OnlOffService onlOffService;
 
     @EventListener
-    public void handleWebSocketListener(SessionConnectedEvent event){
-
+    public void handleSubscribe(SessionSubscribeEvent event){
         StompHeaderAccessor stompAccessor = StompHeaderAccessor.wrap(event.getMessage());
-
-        @SuppressWarnings("rawtypes")
-        GenericMessage connectHeader = (GenericMessage) stompAccessor
-                .getHeader(SimpMessageHeaderAccessor.CONNECT_MESSAGE_HEADER);
-
-        @SuppressWarnings("unchecked")
-        Map<String, List<String>> nativeHeaders = (Map<String, List<String>>) Objects.requireNonNull(connectHeader).getHeaders()
-                .get(NativeMessageHeaderAccessor.NATIVE_HEADERS);
-
-        UUID userId = UUID.fromString(Objects.requireNonNull(nativeHeaders).get("id").get(0));
-        String sessionId = stompAccessor.getSessionId();
-
-        if (this.onlineUsers == null){
-            this.onlineUsers = new HashSet<>();
-        }
-        var user = userRepository.findById(userId).orElseThrow(() -> new BadRequestException(DATA_NOT_FOUND));
-
-        if (user != null){
-            UserOnlineDTO onl = userMapper.convertToOnlineDTO(user);
-            onl.setSessionId(sessionId);
-            this.onlineUsers.add(onl);
-        }
+        log.info("Subscribe success - {}", event.getMessage());
+        messagingTemplate.convertAndSend(stompAccessor.getDestination(), "hello");
+    }
+    @EventListener
+    public void handleConnectedEvent(SessionConnectedEvent event){
+        StompHeaderAccessor stompAccessor = StompHeaderAccessor.wrap(event.getMessage());
+        UUID projectId = UUID.fromString(Objects.requireNonNull(stompAccessor.getFirstNativeHeader("projectId")));
+        onlOffService.addOnlineUser(event.getUser(), projectId);
     }
 
     @EventListener
-    public void handleWebSocketListener(SessionDisconnectEvent event){
+    public void handleDisconnectEvent(SessionDisconnectEvent event){
         StompHeaderAccessor stompAccessor = StompHeaderAccessor.wrap(event.getMessage());
-        String sessionId = stompAccessor.getSessionId();
-
-        UserOnlineDTO user = this.onlineUsers
-                .stream()
-                .filter(e -> e.getSessionId().equals(sessionId))
-                .toList().get(0);
-        this.onlineUsers.remove(user);
+        UUID projectId = UUID.fromString(Objects.requireNonNull(stompAccessor.getFirstNativeHeader("projectId")));
+        onlOffService.removeOnlineUser(event.getUser(), projectId);
     }
 }

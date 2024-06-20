@@ -15,9 +15,9 @@ import java.util.UUID;
 @Setter
 public class FileResponse {
     private UUID id;
-    private String fileName;
-    private String fileUrl;
+    private String name;
+    private String url;
     private FileStatus status;
-    private Instant uploadTime;
-
+    private Instant createdAt;
+    private String type;
 }

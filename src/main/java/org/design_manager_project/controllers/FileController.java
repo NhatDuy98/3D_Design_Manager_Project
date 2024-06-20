@@ -7,7 +7,10 @@ import org.design_manager_project.dtos.file.FileDTO;
 import org.design_manager_project.dtos.file.response.FileResponse;
 import org.design_manager_project.filters.FileFilter;
 import org.design_manager_project.services.FileService;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -37,14 +40,22 @@ public class FileController {
     }
 
     @GetMapping("/{id}/download")
-    public ResponseEntity<ApiResponse> downloadFile(
-            @PathVariable("id") UUID id,
-            FileFilter filter
+    public ResponseEntity<InputStreamResource> downloadFile(
+            @PathVariable("id") UUID id
     ){
-        fileService.download(id, filter);
+        try {
+            FileFilter filter = fileService.download(id);
 
-        return ResponseEntity.ok()
-                .body(ApiResponse.noContent());
+            HttpHeaders headers = new HttpHeaders();
+            headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filter.getFileName());
+
+            return ResponseEntity.ok()
+                    .headers(headers)
+                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                    .body(new InputStreamResource(filter.getStream()));
+        }catch (Exception e){
+            return ResponseEntity.badRequest().body(null);
+        }
     }
 
     @PostMapping

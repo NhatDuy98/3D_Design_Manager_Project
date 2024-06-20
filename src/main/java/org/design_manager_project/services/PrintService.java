@@ -8,7 +8,7 @@ import org.design_manager_project.exeptions.BadRequestException;
 import org.design_manager_project.filters.PrintFilter;
 import org.design_manager_project.mappers.PrintMapper;
 import org.design_manager_project.models.entity.Card;
-import org.design_manager_project.models.entity.File;
+import org.design_manager_project.models.entity.FileObject;
 import org.design_manager_project.models.entity.Print;
 import org.design_manager_project.models.entity.Version;
 import org.design_manager_project.repositories.CardRepository;
@@ -279,9 +279,9 @@ public class PrintService extends BaseService<Print, PrintDTO, PrintFilter, UUID
     public void deleteAll(List<UUID> uuids) {
         List<Print> prints = printRepository.findAllById(uuids);
 
-        List<File> files = prints.stream().map(e -> fileRepository.findByFileUrl(e.getImage())).toList();
+        List<FileObject> fileObjects = prints.stream().map(e -> fileRepository.findByFileUrl(e.getImage())).toList();
 
-        fileService.deleteBulk(files.stream().map(e -> e.getId()).toList());
+        fileService.deleteBulk(fileObjects.stream().map(e -> e.getId()).toList());
 
         super.deleteAll(uuids);
     }

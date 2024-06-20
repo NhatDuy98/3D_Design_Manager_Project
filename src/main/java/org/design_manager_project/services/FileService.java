@@ -12,7 +12,7 @@ import org.design_manager_project.dtos.file.response.FileResponse;
 import org.design_manager_project.exeptions.BadRequestException;
 import org.design_manager_project.filters.FileFilter;
 import org.design_manager_project.mappers.FileMapper;
-import org.design_manager_project.models.entity.File;
+import org.design_manager_project.models.entity.FileObject;
 import org.design_manager_project.models.enums.FileStatus;
 import org.design_manager_project.repositories.FileRepository;
 import org.springframework.data.domain.Page;
@@ -21,7 +21,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Paths;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
@@ -52,7 +51,7 @@ public class FileService {
 
         String fileName = uploadMinio(file);
 
-        var fileRepo = updateFile(fileName);
+        var fileRepo = updateFile(fileName, file);
 
         fileRepository.save(fileRepo);
 
@@ -66,7 +65,7 @@ public class FileService {
             throw new BadRequestException(UPLOAD_FAILED);
         }
 
-        List<File> files = dtos.getFile().stream().map(e -> {
+        List<FileObject> fileObjects = dtos.getFile().stream().map(e -> {
 
             if (e.getSize() > 2_000_000){
                 throw new BadRequestException(BAD_REQUEST);
@@ -74,21 +73,22 @@ public class FileService {
 
             String fileName = uploadMinio(e);
 
-            return updateFile(fileName);
+            return updateFile(fileName, e);
         }).toList();
 
-        fileRepository.saveAll(files);
+        fileRepository.saveAll(fileObjects);
 
-        return fileMapper.convertListToDTO(files);
+        return fileMapper.convertListToDTO(fileObjects);
     }
 
-    private File updateFile(String fileName) {
+    private FileObject updateFile(String fileName, MultipartFile fileUpload) {
         String prefix = minioProperties.getUrl() + "/" + minioProperties.getBucket() + "/";
 
-        var file = new File();
-        file.setFileName(fileName);
-        file.setFileUrl(prefix + fileName);
+        var file = new FileObject();
+        file.setName(fileName);
+        file.setUrl(prefix + fileName);
         file.setStatus(FileStatus.TEMP);
+        file.setType(fileUpload.getContentType());
 
         return file;
     }
@@ -157,24 +157,24 @@ public class FileService {
 
     @Transactional
     public void delete(UUID id){
-        File file = fileRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(OBJECT_DELETED));
+        FileObject fileObject = fileRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(OBJECT_DELETED));
 
         fileRepository.deleteById(id);
 
-        deleteMinio(file);
+        deleteMinio(fileObject);
     }
 
     public void deleteBulk(List<UUID> ids){
-        List<File> files = fileRepository.findAllById(ids);
+        List<FileObject> fileObjects = fileRepository.findAllById(ids);
 
         fileRepository.deleteAllById(ids);
 
-        deleteMinioBulk(files);
+        deleteMinioBulk(fileObjects);
     }
 
     @SneakyThrows
-    private void deleteMinioBulk(List<File> files) {
-        List<DeleteObject> objects = files.stream().map(e -> new DeleteObject(e.getFileName())).toList();
+    private void deleteMinioBulk(List<FileObject> fileObjects) {
+        List<DeleteObject> objects = fileObjects.stream().map(e -> new DeleteObject(e.getName())).toList();
 
         RemoveObjectsArgs args = RemoveObjectsArgs.builder()
                 .bucket(minioProperties.getBucket())
@@ -184,10 +184,10 @@ public class FileService {
     }
 
     @SneakyThrows
-    private void deleteMinio(File file){
+    private void deleteMinio(FileObject fileObject){
         RemoveObjectArgs args = RemoveObjectArgs.builder()
                 .bucket(minioProperties.getBucket())
-                .object(file.getFileName())
+                .object(fileObject.getName())
                 .build();
         minioClient.removeObject(args);
     }
@@ -204,7 +204,7 @@ public class FileService {
     }
 
     public void updateFileStatusBulk(List<String> name){
-        List<File> files = name.stream().map(e -> {
+        List<FileObject> fileObjects = name.stream().map(e -> {
             var file = fileRepository.findByFileUrl(e);
 
             if (file == null){
@@ -216,17 +216,17 @@ public class FileService {
             return file;
         }).toList();
 
-        fileRepository.saveAll(files);
+        fileRepository.saveAll(fileObjects);
     }
 
     public void deleteTempFile() {
         Instant thresholdTime = Instant.now().minus(1, ChronoUnit.DAYS);
 
-        List<File> files = fileRepository.findAllByStatusAndUploadTime(String.valueOf(FileStatus.TEMP), thresholdTime);
+        List<FileObject> fileObjects = fileRepository.findAllByStatusAndUploadTime(String.valueOf(FileStatus.TEMP), thresholdTime);
 
-        fileRepository.deleteAll(files);
+        fileRepository.deleteAll(fileObjects);
 
-        deleteMinioBulk(files);
+        deleteMinioBulk(fileObjects);
     }
 
     public FileResponse getFile(UUID id) {
@@ -236,23 +236,20 @@ public class FileService {
     }
 
     @SneakyThrows
-    public void downloadMinio(File file, FileFilter filter){
-        String fileName = filter.getFileName() == null ? file.getFileName() : filter.getFileName();
-        String destinationDir = filter.getDestinationDir() == null ? "C:\\Users\\ASUS\\Downloads" : filter.getDestinationDir();
-        String destinationPath = Paths.get(destinationDir, fileName).toString();
-
-        DownloadObjectArgs dArgs = DownloadObjectArgs.builder()
+    public InputStream downloadMinio(FileObject fileObject){
+        return minioClient.getObject(GetObjectArgs.builder()
                 .bucket(minioProperties.getBucket())
-                .object(file.getFileName())
-                .filename(destinationPath)
-                .build();
-
-        minioClient.downloadObject(dArgs);
+                .object(fileObject.getName())
+                .build());
     }
 
-    public void download(UUID id,FileFilter filter) {
+    public FileFilter download(UUID id) {
         var file = fileRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(DATA_NOT_FOUND));
 
-        downloadMinio(file, filter);
+        FileFilter filter = new FileFilter();
+        filter.setFileName(file.getName());
+        filter.setStream(downloadMinio(file));
+
+        return filter;
     }
 }

@@ -14,6 +14,6 @@ import java.util.List;
 @Getter
 @Setter
 public class FileDTO {
-    @NotNull(message = "File not null")
+    @NotNull(message = "Files not null")
     private List<MultipartFile> file;
 }

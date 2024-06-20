@@ -17,23 +17,26 @@ import java.util.UUID;
 @Getter
 @Setter
 @Table(name = "files")
-public class File {
+public class FileObject {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id", unique = true, nullable = false)
     private UUID id;
 
-    @Column(name = "file_name")
-    private String fileName;
+    @Column(name = "name", nullable = false)
+    private String name;
 
-    @Column(name = "file_url")
-    private String fileUrl;
+    @Column(name = "url", nullable = false)
+    private String url;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "status", length = 6)
+    @Column(name = "status", length = 6, nullable = false)
     private FileStatus status;
 
-    @Column(name = "upload_time", nullable = false, updatable = false)
+    @Column(name = "created_at", nullable = false, updatable = false)
     @CreationTimestamp
-    private Instant uploadTime;
+    private Instant createdAt;
+
+    @Column(name = "type", nullable = false, length = 100)
+    private String type;
 }

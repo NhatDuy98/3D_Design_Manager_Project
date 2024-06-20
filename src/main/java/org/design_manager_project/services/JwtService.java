@@ -20,7 +20,7 @@ import static org.design_manager_project.utils.Constants.EXPIRATION_TIME;
 @Service
 public class JwtService {
 
-    @Value("${SECRET_KEY}")
+    @Value("${jwt.secretKey}")
     private String SECRET_KEY;
 
     public String extractUserName(String token) {

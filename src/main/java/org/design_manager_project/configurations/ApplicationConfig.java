@@ -1,5 +1,6 @@
 package org.design_manager_project.configurations;
 
+import io.minio.MinioClient;
 import lombok.RequiredArgsConstructor;
 import org.design_manager_project.repositories.UserRepository;
 import org.springframework.context.annotation.Bean;
@@ -19,6 +20,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 public class ApplicationConfig {
 
     private final UserRepository userRepository;
+    private final MinioProperties minioProperties;
 
     @Bean
     public UserDetailsService userDetailsService(){
@@ -46,5 +48,13 @@ public class ApplicationConfig {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public MinioClient minioClient(){
+        return MinioClient.builder()
+                .endpoint(minioProperties.getUrl())
+                .credentials(minioProperties.getAccessKey(), minioProperties.getSecretKey())
+                .build();
     }
 }

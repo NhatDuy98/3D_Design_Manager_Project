@@ -27,7 +27,7 @@ public class WebSocketTokenFilter implements ChannelInterceptor {
     public Message<?> preSend(Message<?> message, MessageChannel channel) {
         final StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
 
-        if (StompCommand.CONNECT == Objects.requireNonNull(accessor).getCommand()){
+        if (StompCommand.CONNECT.equals(Objects.requireNonNull(accessor).getCommand())){
             String token = accessor.getFirstNativeHeader(HEADER_STRING);
             String jwt = Objects.requireNonNull(token).substring(7);
             String userEmail = jwtService.extractUserName(jwt);

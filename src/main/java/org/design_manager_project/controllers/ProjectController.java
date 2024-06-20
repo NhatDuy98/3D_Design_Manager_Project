@@ -42,6 +42,13 @@ public class ProjectController extends BaseController<Project, ProjectDTO, Proje
         return ApiResponse.success(memberService.getAllMembersOnlineWithProject(projectId));
     }
 
+    @GetMapping("/{id}/subscribed")
+    public ApiResponse getAllMembersSubscribedWithProject(
+            @PathVariable("id") UUID projectId
+    ){
+        return ApiResponse.success(memberService.getAllMembersSubscribedWithProject(projectId));
+    }
+
     @GetMapping("/{id}/cards")
     public ApiResponse getAllCardsWithProject(
             @PathVariable("id") UUID projectId,

@@ -21,6 +21,8 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static org.design_manager_project.utils.Constants.PROJECT_ID;
+
 @Component
 @RequiredArgsConstructor
 @Getter
@@ -28,6 +30,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class WebSocketEventListener {
     private static final UserMapper userMapper = UserMapper.INSTANCE;
     private final Map<String, String> simpSessionIdToSubscriptionId = new ConcurrentHashMap<>();
+    private final Map<String, String> simpSessionIdToProjectId = new ConcurrentHashMap<>();
     private final SimpMessageSendingOperations messagingTemplate;
     private final UserRepository userRepository;
     private final OnlOffService onlOffService;
@@ -42,26 +45,30 @@ public class WebSocketEventListener {
             log.error("SUBSCRIBED TO NULL?? WAT?!");
             return;
         }
-        simpSessionIdToSubscriptionId.put(simpSessionId, subscribedChannel);
-
         StompHeaderAccessor stompAccessor = StompHeaderAccessor.wrap(event.getMessage());
         Map<String, List<String>> nativeHeaders = stompAccessor.toNativeHeaderMap();
-        onlOffService.addUserSubscribed(event.getUser(), subscribedChannel);
+        UUID projectId = UUID.fromString(Objects.requireNonNull(nativeHeaders).get(PROJECT_ID).get(0));
+
+        simpSessionIdToSubscriptionId.put(simpSessionId, subscribedChannel);
+
+        onlOffService.addUserSubscribed(event.getUser(), subscribedChannel, projectId);
     }
 
     @EventListener
     public void handleUnSubscribeEvent(SessionUnsubscribeEvent event){
         String simpSessionId = (String) event.getMessage().getHeaders().get("simpSessionId");
         String unSubscribedChannel = simpSessionIdToSubscriptionId.get(simpSessionId);
+        UUID projectId = UUID.fromString(simpSessionIdToProjectId.get(simpSessionId));
 
-        onlOffService.removeUserSubscribed(event.getUser(), unSubscribedChannel);
+        onlOffService.removeUserSubscribed(event.getUser(), unSubscribedChannel, projectId);
+        simpSessionIdToSubscriptionId.remove(simpSessionId);
 
     }
     @EventListener
     public void handleConnectedEvent(SessionConnectedEvent event){
         Map<String, List<String>> nativeHeaders = getNativeHeaders(event);
 
-        UUID projectId = UUID.fromString(Objects.requireNonNull(nativeHeaders).get("projectId").get(0));
+        UUID projectId = UUID.fromString(Objects.requireNonNull(nativeHeaders).get(PROJECT_ID).get(0));
         onlOffService.addOnlineUser(event.getUser(), projectId);
     }
 
@@ -69,7 +76,7 @@ public class WebSocketEventListener {
     public void handleDisconnectEvent(SessionDisconnectEvent event){
         Map<String, List<String>> nativeHeaders = getNativeHeaders(event);
 
-        UUID projectId = UUID.fromString(Objects.requireNonNull(nativeHeaders).get("projectId").get(0));
+        UUID projectId = UUID.fromString(Objects.requireNonNull(nativeHeaders).get(PROJECT_ID).get(0));
         onlOffService.removeOnlineUser(event.getUser(), projectId);
     }
 

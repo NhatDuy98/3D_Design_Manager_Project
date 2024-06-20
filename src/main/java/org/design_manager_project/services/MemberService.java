@@ -120,7 +120,7 @@ public class MemberService extends BaseService<Member, MemberDTO, MemberFilter, 
         return onlOffService.getOnlineUsersWithProject(projectId);
     }
 
-//    public List<UserStatusDTO> getAllMembersSubscribedWithProject(UUID projectId){
-//        return onlOffService.getUserSubscribed(projectId);
-//    }
+    public List<UserStatusDTO> getAllMembersSubscribedWithProject(UUID projectId){
+        return onlOffService.getSubUsersWithProject(projectId);
+    }
 }

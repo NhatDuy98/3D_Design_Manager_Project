@@ -50,6 +50,7 @@ public class WebSocketEventListener {
         UUID projectId = UUID.fromString(Objects.requireNonNull(nativeHeaders).get(PROJECT_ID).get(0));
 
         simpSessionIdToSubscriptionId.put(simpSessionId, subscribedChannel);
+        simpSessionIdToProjectId.put(simpSessionId, String.valueOf(projectId));
 
         onlOffService.addUserSubscribed(event.getUser(), subscribedChannel, projectId);
     }
@@ -62,7 +63,7 @@ public class WebSocketEventListener {
 
         onlOffService.removeUserSubscribed(event.getUser(), unSubscribedChannel, projectId);
         simpSessionIdToSubscriptionId.remove(simpSessionId);
-
+        simpSessionIdToProjectId.remove(simpSessionId);
     }
     @EventListener
     public void handleConnectedEvent(SessionConnectedEvent event){

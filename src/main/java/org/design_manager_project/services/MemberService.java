@@ -2,7 +2,7 @@ package org.design_manager_project.services;
 
 import jakarta.persistence.EntityNotFoundException;
 import org.design_manager_project.dtos.member.MemberDTO;
-import org.design_manager_project.dtos.user.response.UserOnlineDTO;
+import org.design_manager_project.dtos.user.response.UserStatusDTO;
 import org.design_manager_project.exeptions.BadRequestException;
 import org.design_manager_project.filters.MemberFilter;
 import org.design_manager_project.mappers.MemberMapper;
@@ -116,7 +116,11 @@ public class MemberService extends BaseService<Member, MemberDTO, MemberFilter, 
         memberRepository.saveAll(members);
     }
 
-    public List<UserOnlineDTO> getAllMembersOnlineWithProject(UUID projectId) {
+    public List<UserStatusDTO> getAllMembersOnlineWithProject(UUID projectId) {
         return onlOffService.getOnlineUsersWithProject(projectId);
     }
+
+//    public List<UserStatusDTO> getAllMembersSubscribedWithProject(UUID projectId){
+//        return onlOffService.getUserSubscribed(projectId);
+//    }
 }

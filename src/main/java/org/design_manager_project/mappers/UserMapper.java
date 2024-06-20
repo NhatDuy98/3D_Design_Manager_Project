@@ -3,7 +3,7 @@ package org.design_manager_project.mappers;
 import org.design_manager_project.dtos.AuthenticationResponse;
 import org.design_manager_project.dtos.user.UserDTO;
 import org.design_manager_project.dtos.user.request.UserRequestForRegister;
-import org.design_manager_project.dtos.user.response.UserOnlineDTO;
+import org.design_manager_project.dtos.user.response.UserStatusDTO;
 import org.design_manager_project.models.entity.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -21,8 +21,8 @@ public interface UserMapper extends BaseMapper<User, UserDTO>{
     UserMapper INSTANCE = Mappers.getMapper(UserMapper.class);
 
 
-    UserOnlineDTO convertToOnlineDTO(User user);
-    List<UserOnlineDTO> convertToOnlineDTOs(List<User> user);
+    UserStatusDTO convertToOnlineDTO(User user);
+    List<UserStatusDTO> convertToOnlineDTOs(List<User> user);
 
     @Override
     @Mapping(target = "password", constant = "123456")

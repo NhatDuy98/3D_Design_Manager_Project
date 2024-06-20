@@ -9,7 +9,7 @@ import java.util.UUID;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserOnlineDTO {
+public class UserStatusDTO {
     private UUID id;
     private String lastName;
     private String firstName;

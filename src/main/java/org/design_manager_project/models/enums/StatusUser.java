@@ -2,5 +2,7 @@ package org.design_manager_project.models.enums;
 
 public enum StatusUser {
     ONLINE,
-    OFFLINE
+    OFFLINE,
+    TRACKING,
+    UNTRACKING
 }

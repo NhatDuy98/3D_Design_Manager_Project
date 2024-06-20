@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Component
 @RequiredArgsConstructor
@@ -26,19 +27,34 @@ import java.util.UUID;
 @Slf4j
 public class WebSocketEventListener {
     private static final UserMapper userMapper = UserMapper.INSTANCE;
+    private final Map<String, String> simpSessionIdToSubscriptionId = new ConcurrentHashMap<>();
     private final SimpMessageSendingOperations messagingTemplate;
     private final UserRepository userRepository;
     private final OnlOffService onlOffService;
 
     @EventListener
     public void handleSubscribeEvent(SessionSubscribeEvent event){
+        String subscribedChannel =
+                (String) event.getMessage().getHeaders().get("simpDestination");
+        String simpSessionId =
+                (String) event.getMessage().getHeaders().get("simpSessionId");
+        if (subscribedChannel == null) {
+            log.error("SUBSCRIBED TO NULL?? WAT?!");
+            return;
+        }
+        simpSessionIdToSubscriptionId.put(simpSessionId, subscribedChannel);
+
         StompHeaderAccessor stompAccessor = StompHeaderAccessor.wrap(event.getMessage());
-        log.info("Subscribe success - {}", event.getMessage());
-        messagingTemplate.convertAndSend(stompAccessor.getDestination(), "hello");
+        Map<String, List<String>> nativeHeaders = stompAccessor.toNativeHeaderMap();
+        onlOffService.addUserSubscribed(event.getUser(), subscribedChannel);
     }
 
     @EventListener
     public void handleUnSubscribeEvent(SessionUnsubscribeEvent event){
+        String simpSessionId = (String) event.getMessage().getHeaders().get("simpSessionId");
+        String unSubscribedChannel = simpSessionIdToSubscriptionId.get(simpSessionId);
+
+        onlOffService.removeUserSubscribed(event.getUser(), unSubscribedChannel);
 
     }
     @EventListener

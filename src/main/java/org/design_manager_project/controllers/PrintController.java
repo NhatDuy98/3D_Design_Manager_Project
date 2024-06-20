@@ -5,6 +5,7 @@ import org.design_manager_project.dtos.print.PrintDTO;
 import org.design_manager_project.dtos.version.VersionDTO;
 import org.design_manager_project.filters.PrintFilter;
 import org.design_manager_project.models.entity.Print;
+import org.design_manager_project.services.CommentService;
 import org.design_manager_project.services.PrintService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,9 +17,18 @@ import java.util.UUID;
 @RequestMapping("/api/prints")
 public class PrintController extends BaseController<Print, PrintDTO, PrintFilter, UUID> {
     private final PrintService printService;
-    protected PrintController(PrintService printService) {
+    private final CommentService commentService;
+    protected PrintController(PrintService printService, CommentService commentService) {
         super(printService);
         this.printService = printService;
+        this.commentService = commentService;
+    }
+
+    @GetMapping("/{id}/comments")
+    public ResponseEntity<ApiResponse> getAllCommentsWithPrint(
+            @PathVariable("id") UUID printId
+    ){
+        return ResponseEntity.ok(ApiResponse.success(commentService.getAllCommentsWithPrint(printId)));
     }
 
     @PutMapping("/{printId}/versions/{versionId}")

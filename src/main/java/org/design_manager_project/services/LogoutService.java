@@ -8,6 +8,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
 import org.springframework.stereotype.Service;
 
+import static org.design_manager_project.utils.Constants.HEADER_STRING;
+import static org.design_manager_project.utils.Constants.TOKEN_PREFIX;
+
 @Service
 @RequiredArgsConstructor
 public class LogoutService implements LogoutHandler {
@@ -17,9 +20,9 @@ public class LogoutService implements LogoutHandler {
             HttpServletResponse response,
             Authentication authentication
     ) {
-        final String authHeader = request.getHeader("Authorization");
+        final String authHeader = request.getHeader(HEADER_STRING);
         final String jwt;
-        if (authHeader == null || authHeader.startsWith("Bearer  ")){
+        if (authHeader == null || authHeader.startsWith(TOKEN_PREFIX)){
             return;
         }
         SecurityContextHolder.clearContext();

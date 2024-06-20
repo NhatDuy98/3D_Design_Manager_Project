@@ -3,7 +3,6 @@ package org.design_manager_project.controllers;
 import org.design_manager_project.dtos.ApiResponse;
 import org.design_manager_project.dtos.project.ProjectDTO;
 import org.design_manager_project.filters.CardFilter;
-import org.design_manager_project.filters.MemberFilter;
 import org.design_manager_project.filters.PrintFilter;
 import org.design_manager_project.filters.ProjectFilter;
 import org.design_manager_project.models.entity.Project;
@@ -37,11 +36,17 @@ public class ProjectController extends BaseController<Project, ProjectDTO, Proje
     }
 
     @GetMapping("/{id}/members")
-    public ApiResponse getAllMembersWithProject(
-            @PathVariable("id") UUID projectId,
-            MemberFilter filter
+    public ApiResponse getAllMembersOnlineWithProject(
+            @PathVariable("id") UUID projectId
     ){
-        return ApiResponse.success(memberService.getAllMembersWithProject(projectId, filter));
+        return ApiResponse.success(memberService.getAllMembersOnlineWithProject(projectId));
+    }
+
+    @GetMapping("/{id}/subscribed")
+    public ApiResponse getAllMembersSubscribedWithProject(
+            @PathVariable("id") UUID projectId
+    ){
+        return ApiResponse.success(memberService.getAllMembersSubscribedWithProject(projectId));
     }
 
     @GetMapping("/{id}/cards")

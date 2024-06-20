@@ -15,4 +15,5 @@ public class Constants {
     public static final String HEADER_STRING = "Authorization";
     public static final String NOT_ACCEPTED = "NOT_ACCEPTED";
     public static final String OBJECT_ALREADY_EXISTS = "OBJECT_ALREADY_EXISTS";
+    public static final String PROJECT_ID = "projectId";
 }

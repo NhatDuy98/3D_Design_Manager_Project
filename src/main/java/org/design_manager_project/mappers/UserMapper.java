@@ -3,6 +3,7 @@ package org.design_manager_project.mappers;
 import org.design_manager_project.dtos.AuthenticationResponse;
 import org.design_manager_project.dtos.user.UserDTO;
 import org.design_manager_project.dtos.user.request.UserRequestForRegister;
+import org.design_manager_project.dtos.user.response.UserStatusDTO;
 import org.design_manager_project.models.entity.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -10,6 +11,7 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
 import org.mapstruct.factory.Mappers;
 import org.springframework.data.domain.Page;
 
+import java.util.List;
 import java.util.Optional;
 
 @Mapper(componentModel = "spring",
@@ -17,6 +19,10 @@ import java.util.Optional;
 public interface UserMapper extends BaseMapper<User, UserDTO>{
 
     UserMapper INSTANCE = Mappers.getMapper(UserMapper.class);
+
+
+    UserStatusDTO convertToOnlineDTO(User user);
+    List<UserStatusDTO> convertToOnlineDTOs(List<User> user);
 
     @Override
     @Mapping(target = "password", constant = "123456")

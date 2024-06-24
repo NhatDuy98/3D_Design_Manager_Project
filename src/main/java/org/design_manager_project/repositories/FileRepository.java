@@ -2,6 +2,7 @@ package org.design_manager_project.repositories;
 
 import org.design_manager_project.filters.FileFilter;
 import org.design_manager_project.models.entity.FileObject;
+import org.design_manager_project.models.enums.FileStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
@@ -36,5 +37,5 @@ public interface FileRepository extends BaseRepository<FileObject, FileFilter, U
         WHERE f.status = :status 
          AND f.createdAt < :thresholdTime
 """)
-    List<FileObject> findAllByStatusAndUploadTime(String status, Instant thresholdTime);
+    List<FileObject> findAllByStatusAndUploadTime(FileStatus status, Instant thresholdTime);
 }

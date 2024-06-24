@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.design_manager_project.dtos.ApiResponse;
 import org.design_manager_project.dtos.file.FileDTO;
+import org.design_manager_project.dtos.file.request.FileRequestWithID;
 import org.design_manager_project.dtos.file.response.FileResponse;
 import org.design_manager_project.filters.FileFilter;
 import org.design_manager_project.services.FileService;
@@ -87,9 +88,9 @@ public class FileController {
     @SneakyThrows
     @DeleteMapping("/delete-bulk")
     public ResponseEntity<ApiResponse> deleteBulk(
-            @RequestBody List<UUID> ids
+            @RequestBody List<FileRequestWithID> ids
     ){
-        fileService.deleteBulk(ids);
+        fileService.deleteBulk(ids.stream().map(e -> e.getId()).toList());
 
         return ResponseEntity.ok(ApiResponse.success());
     }

@@ -1,11 +1,13 @@
 package org.design_manager_project.services;
 
 import io.minio.*;
+import io.minio.messages.DeleteError;
 import io.minio.messages.DeleteObject;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.design_manager_project.configurations.MinioProperties;
 import org.design_manager_project.dtos.file.FileDTO;
 import org.design_manager_project.dtos.file.response.FileResponse;
@@ -31,6 +33,7 @@ import java.util.UUID;
 import static org.design_manager_project.utils.Constants.*;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class FileService {
     private final MinioClient minioClient;
@@ -180,7 +183,13 @@ public class FileService {
                 .bucket(minioProperties.getBucket())
                 .objects(objects)
                 .build();
-        minioClient.removeObjects(args);
+        Iterable<Result<DeleteError>> results = minioClient.removeObjects(args);
+
+        for (var result : results) {
+            DeleteError error = result.get();
+
+            log.info("MinioUtil | removeObject | error : " + error.objectName() + " " + error.message());
+        }
     }
 
     @SneakyThrows
@@ -222,7 +231,7 @@ public class FileService {
     public void deleteTempFile() {
         Instant thresholdTime = Instant.now().minus(1, ChronoUnit.DAYS);
 
-        List<FileObject> fileObjects = fileRepository.findAllByStatusAndUploadTime(String.valueOf(FileStatus.TEMP), thresholdTime);
+        List<FileObject> fileObjects = fileRepository.findAllByStatusAndUploadTime(FileStatus.TEMP, thresholdTime);
 
         fileRepository.deleteAll(fileObjects);
 

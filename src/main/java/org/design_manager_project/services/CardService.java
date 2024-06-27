@@ -5,12 +5,16 @@ import org.design_manager_project.dtos.card.CardDTO;
 import org.design_manager_project.exeptions.BadRequestException;
 import org.design_manager_project.filters.CardFilter;
 import org.design_manager_project.mappers.CardMapper;
+import org.design_manager_project.mappers.NotificationMapper;
 import org.design_manager_project.models.entity.Card;
 import org.design_manager_project.models.entity.Member;
+import org.design_manager_project.models.entity.Notification;
 import org.design_manager_project.models.enums.Status;
 import org.design_manager_project.repositories.CardRepository;
 import org.design_manager_project.repositories.MemberRepository;
+import org.design_manager_project.repositories.NotificationRepository;
 import org.springframework.data.domain.Page;
+import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -27,11 +31,17 @@ public class CardService extends BaseService<Card, CardDTO, CardFilter, UUID>{
     private final CardRepository cardRepository;
     private final MemberRepository memberRepository;
     private final CardMapper cardMapper = CardMapper.INSTANCE;
+    private final SimpMessageSendingOperations simpMessageSendingOperations;
+    private final NotificationMapper notificationMapper = NotificationMapper.INSTANCE;
+    private final NotificationRepository notificationRepository;
 
-    protected CardService(CardRepository cardRepository, CardMapper cardMapper, MemberRepository memberRepository) {
+
+    protected CardService(CardRepository cardRepository, CardMapper cardMapper, MemberRepository memberRepository, SimpMessageSendingOperations simpMessageSendingOperations, NotificationRepository notificationRepository) {
         super(cardRepository, cardMapper);
         this.cardRepository = cardRepository;
         this.memberRepository = memberRepository;
+        this.simpMessageSendingOperations = simpMessageSendingOperations;
+        this.notificationRepository = notificationRepository;
     }
 
     private void validateDeleted(Card card){
@@ -113,5 +123,28 @@ public class CardService extends BaseService<Card, CardDTO, CardFilter, UUID>{
         filter.setProjectId(projectId);
 
         return cardMapper.convertPageToDTO(cardRepository.findAllWithFilter(filter.getPageable(), filter));
+    }
+
+    public void sendNotificationOverDueCard() {
+        List<Card> cards = cardRepository.findAllCardInProgressAndOverdue(Status.IN_PROGRESS, LocalDate.now());
+
+        for (var e : cards){
+            if (notificationRepository.existsByCard(e)){
+                continue;
+            }
+
+            var notification = new Notification();
+            notification.setCard(e);
+            notification.setUrl("/cards/" + e.getId());
+            notification.setContent("Card overdue!");
+            notification.setIsRead(Boolean.FALSE);
+            notification.setMember(e.getMember());
+            notification.setProject(e.getProject());
+            notificationRepository.save(notification);
+            simpMessageSendingOperations.convertAndSendToUser(e.getMember().getUser().getEmail(),
+                    "/topic/" + e.getProject().getId() + "/notifications",
+                    notificationMapper.convertToDTO(notification)
+            );
+        }
     }
 }

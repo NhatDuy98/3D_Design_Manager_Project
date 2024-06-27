@@ -25,6 +25,9 @@ public class Notification {
     @Column(name = "content", nullable = false)
     private String content;
 
+    @Column(name = "url", nullable = false)
+    private String url;
+
     @Column(name = "is_read", nullable = false)
     private Boolean isRead;
 
@@ -37,15 +40,15 @@ public class Notification {
     private Project project;
 
     @ManyToOne
-    @JoinColumn(name = "comment_id")
+    @JoinColumn(name = "comment_id", unique = true)
     private Comment comment;
 
     @ManyToOne
-    @JoinColumn(name = "card_id")
+    @JoinColumn(name = "card_id", unique = true)
     private Card card;
 
     @ManyToOne
-    @JoinColumn(name = "print_id")
+    @JoinColumn(name = "print_id", unique = true)
     private Print print;
 
     @Column(name = "created_at", nullable = false, updatable = false)

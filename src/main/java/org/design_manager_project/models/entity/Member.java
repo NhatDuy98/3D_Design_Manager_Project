@@ -46,4 +46,7 @@ public class Member extends BaseModel {
 
     @OneToMany(mappedBy = "member")
     private List<Comment> comments;
+
+    @OneToMany(mappedBy = "member")
+    private List<Notification> notifications;
 }

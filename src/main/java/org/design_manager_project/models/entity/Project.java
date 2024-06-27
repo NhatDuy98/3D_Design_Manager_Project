@@ -43,6 +43,9 @@ public class Project extends BaseModel {
     @OneToMany(mappedBy = "project", cascade = {CascadeType.REMOVE})
     private List<Label> labels;
 
+    @OneToMany(mappedBy = "project")
+    private List<Notification> notifications;
+
     @PreRemove
     private void preRemove() {
         for (Member member : members) {

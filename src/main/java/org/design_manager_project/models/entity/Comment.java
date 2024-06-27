@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.design_manager_project.models.BaseModel;
 
+import java.util.List;
+
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
@@ -28,4 +30,6 @@ public class Comment extends BaseModel {
     @Column(name = "content", nullable = false, columnDefinition = "TEXT")
     private String content;
 
+    @OneToMany(mappedBy = "comment")
+    private List<Notification> notifications;
 }

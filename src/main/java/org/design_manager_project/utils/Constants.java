@@ -16,4 +16,5 @@ public class Constants {
     public static final String NOT_ACCEPTED = "NOT_ACCEPTED";
     public static final String OBJECT_ALREADY_EXISTS = "OBJECT_ALREADY_EXISTS";
     public static final String UPLOAD_FAILED = "UPLOAD_FAILED";
+    public static final String DUPLICATE = "DUPLICATE";
 }

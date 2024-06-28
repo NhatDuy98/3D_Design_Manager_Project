@@ -34,4 +34,7 @@ public class Print extends BaseModel {
 
     @OneToMany(mappedBy = "print")
     private List<LabelPrint> labelPrints;
+
+    @OneToMany(mappedBy = "print")
+    private List<Notification> notifications;
 }

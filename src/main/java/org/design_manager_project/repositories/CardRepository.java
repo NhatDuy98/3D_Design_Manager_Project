@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.UUID;
 
 @Repository
@@ -23,4 +24,11 @@ public interface CardRepository extends BaseRepository<Card, CardFilter, UUID> {
 
 """)
     Page<Card> findAllWithFilter(Pageable pageable, CardFilter filter);
+
+    @Query("""
+        SELECT c FROM Card c 
+        WHERE c.status = :#{#filter.status} AND c.endDate < :#{#filter.date} 
+
+""")
+    List<Card> findAllCardWithStatusAndTime(CardFilter filter);
 }

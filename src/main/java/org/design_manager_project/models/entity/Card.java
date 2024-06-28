@@ -52,4 +52,7 @@ public class Card extends BaseModel {
 
     @OneToMany(mappedBy = "card")
     private List<Comment> comments;
+
+    @OneToMany(mappedBy = "card")
+    private List<CardMember> cardMembers;
 }

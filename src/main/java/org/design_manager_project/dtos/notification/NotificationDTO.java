@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.design_manager_project.dtos.BaseDTO;
 import org.design_manager_project.dtos.card.CardDTO;
 
 import java.util.UUID;
@@ -14,8 +15,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class NotificationDTO {
-    private UUID id;
+public class NotificationDTO extends BaseDTO<UUID> {
     private String content;
     private String url;
     private Boolean isRead;

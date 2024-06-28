@@ -2,6 +2,7 @@ package org.design_manager_project.repositories;
 
 import org.design_manager_project.filters.NotificationFilter;
 import org.design_manager_project.models.entity.Card;
+import org.design_manager_project.models.entity.Member;
 import org.design_manager_project.models.entity.Notification;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,5 +24,9 @@ public interface NotificationRepository extends BaseRepository<Notification, Not
 """)
     Page<Notification> findAllWithFilter(Pageable pageable, NotificationFilter filter);
 
-    boolean existsByCard(Card card);
+    Notification findByCard(Card card);
+
+    void deleteByCard(Card card);
+
+    boolean existsByCardAndMember(Card card, Member member);
 }

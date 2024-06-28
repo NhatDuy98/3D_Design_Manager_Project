@@ -2,13 +2,11 @@ package org.design_manager_project.repositories;
 
 import org.design_manager_project.filters.CardFilter;
 import org.design_manager_project.models.entity.Card;
-import org.design_manager_project.models.enums.Status;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -29,8 +27,8 @@ public interface CardRepository extends BaseRepository<Card, CardFilter, UUID> {
 
     @Query("""
         SELECT c FROM Card c 
-        WHERE c.status = :status AND c.endDate < :now 
+        WHERE c.status = :#{#filter.status} AND c.endDate < :#{#filter.date} 
 
 """)
-    List<Card> findAllCardInProgressAndOverdue(Status status, LocalDate now);
+    List<Card> findAllCardWithStatusAndTime(CardFilter filter);
 }

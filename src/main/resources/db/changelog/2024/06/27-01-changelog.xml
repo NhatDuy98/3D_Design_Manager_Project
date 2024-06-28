@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd"
+        objectQuotingStrategy="QUOTE_ONLY_RESERVED_WORDS">
+    <changeSet id="1719478450491-2" author="develop">
+        <createTable tableName="card_members">
+            <column name="id" type="UUID">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_card_members"/>
+            </column>
+            <column name="created_at" type="DATETIME">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="DATETIME">
+                <constraints nullable="false"/>
+            </column>
+            <column name="card_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="member_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet id="1719478450491-3" author="develop">
+        <addForeignKeyConstraint baseColumnNames="card_id" baseTableName="card_members"
+                                 constraintName="FK_CARD_MEMBERS_ON_CARD" referencedColumnNames="id"
+                                 referencedTableName="cards"/>
+    </changeSet>
+    <changeSet id="1719478450491-4" author="develop">
+        <addForeignKeyConstraint baseColumnNames="member_id" baseTableName="card_members"
+                                 constraintName="FK_CARD_MEMBERS_ON_MEMBER" referencedColumnNames="id"
+                                 referencedTableName="members"/>
+    </changeSet>
+
+</databaseChangeLog>

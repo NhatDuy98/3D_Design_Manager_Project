@@ -27,4 +27,9 @@ public class GlobalSchedule {
         log.info("Send notification about card overdue......");
     }
 
+    public void sendNotificationForReview(){
+        cardService.sendNotificationForReview();
+        log.info("Send notification for card review......");
+    }
+
 }

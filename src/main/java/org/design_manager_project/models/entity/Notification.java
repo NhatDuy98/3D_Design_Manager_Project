@@ -5,10 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.CreationTimestamp;
-
-import java.time.Instant;
-import java.util.UUID;
+import org.design_manager_project.models.BaseModel;
 
 @Entity
 @AllArgsConstructor
@@ -16,11 +13,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @Table(name = "notifications")
-public class Notification {
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "id", unique = true, nullable = false)
-    private UUID id;
+public class Notification extends BaseModel {
 
     @Column(name = "content", nullable = false)
     private String content;
@@ -44,16 +37,11 @@ public class Notification {
     private Comment comment;
 
     @ManyToOne
-    @JoinColumn(name = "card_id", unique = true)
+    @JoinColumn(name = "card_id")
     private Card card;
 
     @ManyToOne
     @JoinColumn(name = "print_id", unique = true)
     private Print print;
-
-    @Column(name = "created_at", nullable = false, updatable = false)
-    @CreationTimestamp
-    private Instant createdAt;
-
 
 }
